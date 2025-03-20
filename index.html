@@ -1791,8 +1791,51 @@
     }
     
     // Salvar cliente
-    function salvarCliente() {
-        mostrarNotificacao('Função de salvar cliente em desenvolvimento');
+  // Salvar cliente
+function salvarCliente() {
+    const nome = document.getElementById('clientName').value;
+    const email = document.getElementById('clientEmail').value;
+    const telefone = document.getElementById('clientPhone').value;
+    const observacoes = document.getElementById('clientNotes').value;
+    
+    // Validar nome
+    if (!nome) {
+        mostrarNotificacao('Por favor, informe o nome do cliente.', 'error');
+        return;
+    }
+    
+    // Criar objeto do cliente
+    const cliente = {
+        id: Date.now(),
+        nome,
+        email,
+        telefone,
+        observacoes,
+        dataCadastro: new Date().toISOString()
+    };
+    
+    // Carregar clientes salvos
+    let clientes = JSON.parse(localStorage.getItem('calculadoraClientes')) || [];
+    
+    // Adicionar novo cliente
+    clientes.push(cliente);
+    
+    // Salvar no localStorage
+    localStorage.setItem('calculadoraClientes', JSON.stringify(clientes));
+    
+    // Fechar modal
+    document.getElementById('clientModal').style.display = 'none';
+    
+    // Atualizar select de clientes
+    let selectClientes = document.getElementById('clienteSelect');
+    let html = '<option value="">Selecione um cliente</option>';
+    clientes.forEach(c => {
+        html += `<option value="${c.id}">${c.nome}</option>`;
+    });
+    selectClientes.innerHTML = html;
+    
+    mostrarNotificacao('Cliente salvo com sucesso!');
+}
     }
     </script>
     
