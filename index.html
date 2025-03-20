@@ -1568,6 +1568,35 @@
             `;
             
             resultadoDiv.style.display = 'block';
+
+            // Compartilhar via WhatsApp
+function compartilharWhatsApp() {
+    const item = window.calculoAtual;
+    
+    if (!item) {
+        mostrarNotificacao('Nenhum cálculo para compartilhar', 'error');
+        return;
+    }
+    
+    const metodoPagamento = item.metodoPagamento === 'pix' ? 'Pix' : 'Cartão';
+    
+    const texto = `*LED LINE BR PARTS - Orçamento*
+    
+*Produto:* ${item.nomeProduto}
+*Preço Unitário:* ${formatarMoeda(item.precoFinal, 'BRL')}
+*Quantidade:* ${item.quantidade || 1} unidades
+*Preço Total:* ${formatarMoeda(item.precoFinal * (item.quantidade || 1), 'BRL')}
+*Método de Pagamento:* ${metodoPagamento}
+
+Orçamento gerado em ${formatarData(new Date().toISOString())}
+LED LINE BR PARTS`;
+
+    // Criar URL para WhatsApp
+    const url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
+    
+    // Abrir em nova aba
+    window.open(url, '_blank');
+}
             
             // Armazenar dados do cálculo atual para salvar
             window.calculoAtual = {
