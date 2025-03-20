@@ -2019,18 +2019,20 @@
     
     // Firebase config - SUBSTITUA COM SUAS CREDENCIAIS DO FIREBASE
     const firebaseConfig = {
-        apiKey: "AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-        authDomain: "led-line-calculator.firebaseapp.com",
-        projectId: "led-line-calculator",
-        storageBucket: "led-line-calculator.appspot.com", 
-        messagingSenderId: "000000000000",
-        appId: "1:000000000000:web:000000000000000000000"
+        apiKey: "AIzaSyBCIzlpkVhBvum-tdZ0l_bNPq6ooKY_Utk",
+        authDomain: "calculadora-led-line-ff960.firebaseapp.com",
+        projectId: "calculadora-led-line-ff960",
+        storageBucket: "calculadora-led-line-ff960.firebasestorage.app", 
+        messagingSenderId: "840987995786",
+        appId: "1:840987995786:web:a1f2a8e0daf10aee310773"
+     measurementId: "G-5T82RDCD9F"
     };
     
     // Inicialização quando o DOM estiver carregado
     document.addEventListener('DOMContentLoaded', function() {
         // Inicialização do Firebase (descomente quando tiver suas credenciais)
-        // firebase.initializeApp(firebaseConfig);
+    
+    firebase.initializeApp(firebaseConfig);
         
         // Configurar sistema de abas
         setupTabs();
