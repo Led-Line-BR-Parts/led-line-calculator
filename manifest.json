@@ -1,7 +1,7 @@
 {
   "name": "LED LINE BR PARTS - Calculadora",
   "short_name": "Calculadora",
-  "description": "Calculadora de preços com taxas para LED LINE BR PARTS",
+  "description": "Calculadora de preços com taxas",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -17,43 +17,6 @@
       "src": "icon-512.png",
       "type": "image/png",
       "sizes": "512x512"
-    },
-    {
-      "src": "apple-touch-icon.png",
-      "sizes": "180x180",
-      "type": "image/png",
-      "purpose": "any maskable"
-    },
-    {
-      "src": "favicon-32x32.png",
-      "sizes": "32x32",
-      "type": "image/png"
-    },
-    {
-      "src": "favicon-16x16.png",
-      "sizes": "16x16",
-      "type": "image/png"
     }
-  ],
-  "shortcuts": [
-    {
-      "name": "Nova Cotação",
-      "short_name": "Cotação",
-      "description": "Iniciar uma nova cotação",
-      "url": "./index.html?action=new",
-      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
-    },
-    {
-      "name": "Ver Clientes",
-      "short_name": "Clientes",
-      "description": "Gerenciar clientes",
-      "url": "./index.html?tab=clients",
-      "icons": [{ "src": "icon-192.png", "sizes": "192x192" }]
-    }
-  ],
-  "categories": ["business", "finance", "utilities"],
-  "lang": "pt-BR",
-  "dir": "ltr",
-  "screenshots": [],
-  "prefer_related_applications": false
+  ]
 }
