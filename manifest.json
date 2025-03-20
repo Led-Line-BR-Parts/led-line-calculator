@@ -1,7 +1,7 @@
 {
   "name": "LED LINE BR PARTS - Calculadora",
   "short_name": "Calculadora",
-  "description": "Calculadora de preços com taxas",
+  "description": "Calculadora de preços com taxas para LED LINE BR PARTS",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -11,12 +11,41 @@
     {
       "src": "icon-192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any maskable"
     },
     {
       "src": "icon-512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
-  ]
+  ],
+  "categories": ["business", "finance", "utilities"],
+  "screenshots": [
+    {
+      "src": "screenshot-1.png",
+      "sizes": "1280x720",
+      "type": "image/png"
+    },
+    {
+      "src": "screenshot-2.png",
+      "sizes": "1280x720",
+      "type": "image/png"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Calculadora",
+      "url": "./index.html",
+      "description": "Abrir a calculadora principal"
+    },
+    {
+      "name": "Histórico",
+      "url": "./index.html?tab=history",
+      "description": "Ver histórico de cotações"
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false
 }
