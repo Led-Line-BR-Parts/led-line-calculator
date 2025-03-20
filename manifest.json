@@ -1,0 +1,22 @@
+{
+  "name": "LED LINE BR PARTS - Calculadora",
+  "short_name": "Calculadora",
+  "description": "Calculadora de preços com taxas",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0d838c",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ]
+}
