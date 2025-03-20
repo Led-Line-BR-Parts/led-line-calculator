@@ -1041,12 +1041,6 @@
                     <div class="chart-container">
                         <canvas id="graficoDistribuicao"></canvas>
                     </div>
-                    <div style="padding: 0 1.5rem 1.5rem;">
-                        <div style="display: flex; gap: 10px; margin-top: 15px;">
-                            <button id="salvarBtn"><i class="fas fa-save"></i> Salvar Orçamento</button>
-                            <button id="compartilharBtn"><i class="fas fa-share-alt"></i> Compartilhar</button>
-                        </div>
-                    </div>
                 </div>
             </div>
             
@@ -1173,6 +1167,12 @@
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('dataCotacao').value = today;
         
+        // Buscar cotação do dólar atual ao iniciar
+        atualizarCotacaoDolar();
+        
+        // Carregar clientes
+        carregarClientes();
+        
         // Carregar itens salvos
         carregarItensSalvos();
         
@@ -1202,11 +1202,6 @@
     
     // Adicionar todos os event listeners
     function addEventListeners() {
-        // Botão de atualizar dólar
-const atualizarDolarBtn = document.getElementById('atualizarDolarBtn');
-if (atualizarDolarBtn) {
-    atualizarDolarBtn.addEventListener('click', atualizarCotacaoDolar);
-}
         // Configurar sistema de abas
         setupTabs();
         
@@ -1215,96 +1210,44 @@ if (atualizarDolarBtn) {
         document.getElementById('editarTaxasBtn').addEventListener('click', toggleTaxasForm);
         document.getElementById('salvarTaxasBtn').addEventListener('click', salvarTaxas);
         document.getElementById('theme-toggle').addEventListener('change', toggleTheme);
-        
-        // Adicionar evento para método de pagamento
-        const metodoPagamento = document.getElementById('metodoPagamento');
-        if (metodoPagamento) {
-            metodoPagamento.addEventListener('change', toggleTaxaDisplay);
-        }
-        
-        // Botão de atualizar dólar
-        const atualizarDolarBtn = document.getElementById('atualizarDolarBtn');
-        if (atualizarDolarBtn) {
-            atualizarDolarBtn.addEventListener('click', atualizarCotacaoDolar);
-        }
+        document.getElementById('metodoPagamento').addEventListener('change', toggleTaxaDisplay);
+        document.getElementById('atualizarDolarBtn').addEventListener('click', atualizarCotacaoDolar);
         
         // Botões de orçamentos salvos
         document.getElementById('buscarBtn').addEventListener('click', filtrarOrcamentos);
-        
-        // Adicionar evento ao filtro
-        const filtroOrcamentos = document.getElementById('filtroOrcamentos');
-        if (filtroOrcamentos) {
-            filtroOrcamentos.addEventListener('keyup', function(event) {
-                if (event.key === 'Enter') {
-                    filtrarOrcamentos();
-                }
-            });
-        }
-        
-        // Botões de exportação e limpeza
-        const exportarCSVBtn = document.getElementById('exportarCSVBtn');
-        if (exportarCSVBtn) {
-            exportarCSVBtn.addEventListener('click', exportarCSV);
-        }
-        
-        const exportarExcelBtn = document.getElementById('exportarExcelBtn');
-        if (exportarExcelBtn) {
-            exportarExcelBtn.addEventListener('click', exportarExcel);
-        }
-        
-        const limparDadosBtn = document.getElementById('limparDadosBtn');
-        if (limparDadosBtn) {
-            limparDadosBtn.addEventListener('click', limparDados);
-        }
-        
-        // Botões de visualização
-        const cardViewBtn = document.getElementById('cardViewBtn');
-        if (cardViewBtn) {
-            cardViewBtn.addEventListener('click', function() {
-                setActiveViewButton('cardViewBtn');
-                carregarItensSalvos('card');
-            });
-        }
-        
-        const tableViewBtn = document.getElementById('tableViewBtn');
-        if (tableViewBtn) {
-            tableViewBtn.addEventListener('click', function() {
-                setActiveViewButton('tableViewBtn');
-                carregarItensSalvos('table');
-            });
-        }
+        document.getElementById('filtroOrcamentos').addEventListener('keyup', function(event) {
+            if (event.key === 'Enter') {
+                filtrarOrcamentos();
+            }
+        });
+        document.getElementById('exportarCSVBtn').addEventListener('click', exportarCSV);
+        document.getElementById('exportarExcelBtn').addEventListener('click', exportarExcel);
+        document.getElementById('limparDadosBtn').addEventListener('click', limparDados);
+        document.getElementById('cardViewBtn').addEventListener('click', function() {
+            setActiveViewButton('cardViewBtn');
+            carregarItensSalvos('card');
+        });
+        document.getElementById('tableViewBtn').addEventListener('click', function() {
+            setActiveViewButton('tableViewBtn');
+            carregarItensSalvos('table');
+        });
         
         // Botões de clientes
-        const addClienteBtn = document.getElementById('addClienteBtn');
-        if (addClienteBtn) {
-            addClienteBtn.addEventListener('click', abrirModalCliente);
-        }
-        
-        const newClientBtn = document.getElementById('newClientBtn');
-        if (newClientBtn) {
-            newClientBtn.addEventListener('click', abrirModalCliente);
-        }
-        
-        const saveClientBtn = document.getElementById('saveClientBtn');
-        if (saveClientBtn) {
-            saveClientBtn.addEventListener('click', salvarCliente);
-        }
+        document.getElementById('addClienteBtn').addEventListener('click', abrirModalCliente);
+        document.getElementById('newClientBtn').addEventListener('click', abrirModalCliente);
+        document.getElementById('saveClientBtn').addEventListener('click', salvarCliente);
+        document.getElementById('buscarClientesBtn').addEventListener('click', filtrarClientes);
         
         // Botões de login
-        const loginStatusBtn = document.getElementById('loginStatusBtn');
-        if (loginStatusBtn) {
-            loginStatusBtn.addEventListener('click', abrirModalLogin);
-        }
+        document.getElementById('loginStatusBtn').addEventListener('click', abrirModalLogin);
+        document.getElementById('loginBtn').addEventListener('click', fazerLogin);
+        document.getElementById('registerBtn').addEventListener('click', registrarUsuario);
         
-        const loginBtn = document.getElementById('loginBtn');
-        if (loginBtn) {
-            loginBtn.addEventListener('click', fazerLogin);
-        }
-        
-        const registerBtn = document.getElementById('registerBtn');
-        if (registerBtn) {
-            registerBtn.addEventListener('click', registrarUsuario);
-        }
+        // Botões de compartilhamento
+        document.getElementById('shareWhatsapp').addEventListener('click', compartilharWhatsApp);
+        document.getElementById('shareEmail').addEventListener('click', compartilharEmail);
+        document.getElementById('sharePdf').addEventListener('click', compartilharPDF);
+        document.getElementById('shareLink').addEventListener('click', compartilharLink);
         
         // Fechar modais
         document.querySelectorAll('.close-modal').forEach(closeBtn => {
@@ -1458,6 +1401,9 @@ if (atualizarDolarBtn) {
             // Restaurar botão
             dolarBtn.innerHTML = '<i class="fas fa-sync-alt"></i>';
             
+            // Salvar cotação no histórico
+            salvarCotacaoHistorico(cotacao);
+            
             mostrarNotificacao('Cotação do dólar atualizada!');
         } catch (error) {
             console.error('Erro ao buscar cotação do dólar:', error);
@@ -1466,7 +1412,29 @@ if (atualizarDolarBtn) {
         }
     }
     
-    // Calcular preço - Versão simplificada para diagnóstico inicial
+    // Salvar cotação no histórico
+    function salvarCotacaoHistorico(cotacao) {
+        let historico = JSON.parse(localStorage.getItem('cotacaoHistorico')) || [];
+        
+        // Adicionar cotação atual
+        historico.push({
+            data: new Date().toISOString(),
+            valor: cotacao
+        });
+        
+        // Manter apenas os últimos 30 dias
+        if (historico.length > 30) {
+            historico = historico.slice(historico.length - 30);
+        }
+        
+        // Salvar no localStorage
+        localStorage.setItem('cotacaoHistorico', JSON.stringify(historico));
+        
+        // Atualizar variável global
+        cotacaoHistorico = historico;
+    }
+    
+    // Calcular preço
     function calcularPreco() {
         console.log("Função calcularPreco executando...");
         
@@ -1479,6 +1447,8 @@ if (atualizarDolarBtn) {
             const margemLucro = parseFloat(document.getElementById('margemLucro').value);
             const quantidade = parseInt(document.getElementById('quantidade').value) || 1;
             const metodoPagamento = document.getElementById('metodoPagamento').value;
+            const clienteId = document.getElementById('clienteSelect').value;
+            const observacoes = document.getElementById('observacoes').value;
             
             // Validar inputs
             if (!nomeProduto || !dataCotacao || isNaN(custoDolar) || isNaN(cotacaoDolar) || isNaN(margemLucro)) {
@@ -1536,6 +1506,13 @@ if (atualizarDolarBtn) {
             const precoTotalFinal = precoFinal * quantidade;
             const lucroTotalReal = lucroReal * quantidade;
             
+            // Buscar nome do cliente
+            let clienteNome = '';
+            if (clienteId) {
+                const cliente = clientesData.find(c => c.id == clienteId);
+                clienteNome = cliente ? cliente.nome : '';
+            }
+            
             // Exibir resultado
             const resultadoDiv = document.getElementById('resultado');
             const resultadoDetalhes = document.getElementById('resultadoDetalhes');
@@ -1567,43 +1544,14 @@ if (atualizarDolarBtn) {
                 <p><strong>Lucro Total:</strong> ${formatarMoeda(lucroTotalReal, 'BRL')}</p>
                 <p><strong>Preço Final Total:</strong> ${formatarMoeda(precoTotalFinal, 'BRL')}</p>
                 <div style="display: flex; gap: 10px; margin-top: 15px;">
-    <button id="salvarBtn"><i class="fas fa-save"></i> Salvar Orçamento</button>
-    <button id="compartilharBtn"><i class="fas fa-share-alt"></i> Compartilhar</button>
-</div>
+                    <button id="salvarBtn"><i class="fas fa-save"></i> Salvar Orçamento</button>
+                    <button id="compartilharBtn"><i class="fas fa-share-alt"></i> Compartilhar</button>
+                </div>
             `;
             
             resultadoDiv.style.display = 'block';
-
-            // Compartilhar via WhatsApp
-function compartilharWhatsApp() {
-    const item = window.calculoAtual;
-    
-    if (!item) {
-        mostrarNotificacao('Nenhum cálculo para compartilhar', 'error');
-        return;
-    }
-    
-    const metodoPagamento = item.metodoPagamento === 'pix' ? 'Pix' : 'Cartão';
-    
-    const texto = `*LED LINE BR PARTS - Orçamento*
-    
-*Produto:* ${item.nomeProduto}
-*Preço Unitário:* ${formatarMoeda(item.precoFinal, 'BRL')}
-*Quantidade:* ${item.quantidade || 1} unidades
-*Preço Total:* ${formatarMoeda(item.precoFinal * (item.quantidade || 1), 'BRL')}
-*Método de Pagamento:* ${metodoPagamento}
-
-Orçamento gerado em ${formatarData(new Date().toISOString())}
-LED LINE BR PARTS`;
-
-    // Criar URL para WhatsApp
-    const url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
-    
-    // Abrir em nova aba
-    window.open(url, '_blank');
-}
             
-            // Armazenar dados do cálculo atual para salvar
+            // Armazenar dados do cálculo atual para salvar e compartilhar
             window.calculoAtual = {
                 id: Date.now(),
                 nomeProduto,
@@ -1623,21 +1571,21 @@ LED LINE BR PARTS`;
                 quantidade,
                 metodoPagamento,
                 precoTotalFinal,
+                clienteId,
+                clienteNome,
+                observacoes,
+                taxas: config.taxas,
                 dataCriacao: new Date().toISOString()
             };
-            // Adicionar evento ao botão compartilhar
-document.getElementById('compartilharBtn').addEventListener('click', compartilharWhatsApp);
             
-            // Recria botão de salvar para garantir um evento limpo
-            const salvarBtnContainer = document.createElement('div');
-            salvarBtnContainer.innerHTML = '<button id="salvarBtn"><i class="fas fa-save"></i> Salvar Orçamento</button>';
-            
-            // Adicionar ao resultado
-            resultadoDetalhes.appendChild(salvarBtnContainer);
-            
-            // Adicionar evento ao novo botão
+            // Adicionar evento ao botão de salvar
             document.getElementById('salvarBtn').addEventListener('click', function() {
                 salvarItem(window.calculoAtual);
+            });
+            
+            // Adicionar evento ao botão de compartilhar
+            document.getElementById('compartilharBtn').addEventListener('click', function() {
+                abrirModalCompartilhar(window.calculoAtual);
             });
         } catch (erro) {
             console.error("Erro ao calcular preço:", erro);
@@ -1667,6 +1615,7 @@ document.getElementById('compartilharBtn').addEventListener('click', compartilha
             document.getElementById('custoDolar').value = '';
             document.getElementById('margemLucro').value = '';
             document.getElementById('quantidade').value = '1';
+            document.getElementById('observacoes').value = '';
             
             // Ocultar resultado
             document.getElementById('resultado').style.display = 'none';
@@ -1678,7 +1627,111 @@ document.getElementById('compartilharBtn').addEventListener('click', compartilha
         }
     }
     
-    // Carregar itens salvos - Versão simplificada para diagnóstico
+    // Abrir modal de compartilhamento
+    function abrirModalCompartilhar(item) {
+        const modal = document.getElementById('shareModal');
+        const shareContent = document.getElementById('shareContent');
+        
+        const cliente = item.clienteNome ? `<p><strong>Cliente:</strong> ${item.clienteNome}</p>` : '';
+        const observacoes = item.observacoes ? `<p><strong>Observações:</strong> ${item.observacoes}</p>` : '';
+        
+        // Preencher conteúdo do modal
+        shareContent.innerHTML = `
+            <div style="margin-bottom: 20px;">
+                <h4 style="margin-bottom: 10px;">${item.nomeProduto}</h4>
+                <p><strong>Preço Unitário:</strong> ${formatarMoeda(item.precoFinal, 'BRL')}</p>
+                <p><strong>Quantidade:</strong> ${item.quantidade || 1} unidades</p>
+                <p><strong>Preço Total:</strong> ${formatarMoeda(item.precoFinal * (item.quantidade || 1), 'BRL')}</p>
+                ${cliente}
+                ${observacoes}
+            </div>
+        `;
+        
+        // Armazenar o item atual para compartilhamento
+        window.itemParaCompartilhar = item;
+        
+        // Exibir modal
+        modal.style.display = 'block';
+    }
+    
+    // Compartilhar via WhatsApp
+    function compartilharWhatsApp() {
+        const item = window.itemParaCompartilhar;
+        
+        if (!item) {
+            mostrarNotificacao('Nenhum orçamento para compartilhar', 'error');
+            return;
+        }
+        
+        const metodoPagamento = item.metodoPagamento === 'pix' ? 'Pix' : 'Cartão';
+        
+        const texto = `*LED LINE BR PARTS - Orçamento*
+        
+*Produto:* ${item.nomeProduto}
+*Preço Unitário:* ${formatarMoeda(item.precoFinal, 'BRL')}
+*Quantidade:* ${item.quantidade || 1} unidades
+*Preço Total:* ${formatarMoeda(item.precoFinal * (item.quantidade || 1), 'BRL')}
+*Método de Pagamento:* ${metodoPagamento}
+
+${item.observacoes ? 'Observações: ' + item.observacoes : ''}
+
+Orçamento gerado em ${formatarData(new Date().toISOString())}
+LED LINE BR PARTS`;
+
+        // Criar URL para WhatsApp
+        const url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
+        
+        // Abrir em nova aba
+        window.open(url, '_blank');
+        
+        // Fechar modal
+        document.getElementById('shareModal').style.display = 'none';
+    }
+    
+    // Compartilhar via Email
+    function compartilharEmail() {
+        const item = window.itemParaCompartilhar;
+        
+        if (!item) {
+            mostrarNotificacao('Nenhum orçamento para compartilhar', 'error');
+            return;
+        }
+        
+        const assunto = `Orçamento: ${item.nomeProduto}`;
+        
+        const corpo = `Orçamento: ${item.nomeProduto}
+        
+Preço Unitário: ${formatarMoeda(item.precoFinal, 'BRL')}
+Quantidade: ${item.quantidade || 1} unidades
+Preço Total: ${formatarMoeda(item.precoFinal * (item.quantidade || 1), 'BRL')}
+
+${item.observacoes ? 'Observações: ' + item.observacoes : ''}
+
+Orçamento gerado por LED LINE BR PARTS`;
+
+        // Criar URL para email
+        const url = `mailto:?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpo)}`;
+        
+        // Abrir cliente de email
+        window.location.href = url;
+        
+        // Fechar modal
+        document.getElementById('shareModal').style.display = 'none';
+    }
+    
+    // Compartilhar como PDF
+    function compartilharPDF() {
+        mostrarNotificacao('Função em desenvolvimento');
+        document.getElementById('shareModal').style.display = 'none';
+    }
+    
+    // Compartilhar como link
+    function compartilharLink() {
+        mostrarNotificacao('Função em desenvolvimento');
+        document.getElementById('shareModal').style.display = 'none';
+    }
+    
+    // Carregar itens salvos
     function carregarItensSalvos(viewType) {
         console.log("Carregando itens salvos...");
         try {
@@ -1693,6 +1746,15 @@ document.getElementById('compartilharBtn').addEventListener('click', compartilha
             // Ordenar itens do mais recente para o mais antigo
             itensSalvos.sort((a, b) => b.id - a.id);
             
+            // Filtrar se houver filtro
+            const filtro = document.getElementById('filtroOrcamentos').value.trim().toLowerCase();
+            if (filtro) {
+                itensSalvos = itensSalvos.filter(item => 
+                    item.nomeProduto.toLowerCase().includes(filtro) || 
+                    (item.clienteNome && item.clienteNome.toLowerCase().includes(filtro))
+                );
+            }
+            
             // Exibir itens em cards para diagnóstico
             let html = '';
             
@@ -1703,9 +1765,13 @@ document.getElementById('compartilharBtn').addEventListener('click', compartilha
                         <div class="item-details">
                             <p><strong>Data:</strong> ${formatarData(item.dataCotacao)}</p>
                             <p><strong>Preço Final:</strong> ${formatarMoeda(item.precoFinal || 0, 'BRL')}</p>
+                            <p><strong>Quantidade:</strong> ${item.quantidade || 1} unidades</p>
+                            <p><strong>Total:</strong> ${formatarMoeda((item.precoFinal || 0) * (item.quantidade || 1), 'BRL')}</p>
+                            ${item.clienteNome ? `<p><strong>Cliente:</strong> ${item.clienteNome}</p>` : ''}
                         </div>
                         <div class="item-actions">
                             <button class="edit-btn" data-id="${item.id}"><i class="fas fa-edit"></i> Editar</button>
+                            <button class="share-btn" data-id="${item.id}" style="background-color: #4895ef;"><i class="fas fa-share-alt"></i> Compartilhar</button>
                             <button class="delete-btn" data-id="${item.id}"><i class="fas fa-trash"></i> Excluir</button>
                         </div>
                     </div>
@@ -1716,71 +1782,33 @@ document.getElementById('compartilharBtn').addEventListener('click', compartilha
             
             // Adicionar eventos aos botões
             document.querySelectorAll('.edit-btn').forEach(btn => {
-                btn.onclick = function() {
-                    console.log("Botão de editar clicado:", this.getAttribute('data-id'));
-                    // A função de editar será implementada depois
-                };
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    editarItem(id);
+                });
+            });
+            
+            document.querySelectorAll('.share-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    const item = itensSalvos.find(item => item.id == id);
+                    if (item) {
+                        abrirModalCompartilhar(item);
+                    }
+                });
             });
             
             document.querySelectorAll('.delete-btn').forEach(btn => {
-                btn.onclick = function() {
-                    if (confirm('Tem certeza que deseja excluir este orçamento?')) {
-                        const id = this.getAttribute('data-id');
-                        let itens = JSON.parse(localStorage.getItem('calculadoraLucro')) || [];
-                        itens = itens.filter(item => item.id != id);
-                        localStorage.setItem('calculadoraLucro', JSON.stringify(itens));
-                        carregarItensSalvos();
-                        mostrarNotificacao('Orçamento excluído com sucesso!');
-                    }
-                };
+                btn.addEventListener('click', function() {
+                    const id = this.getAttribute('data-id');
+                    excluirItem(id);
+                });
             });
         } catch (erro) {
             console.error("Erro ao carregar itens:", erro);
+            const itensSalvosDiv = document.getElementById('itensSalvos');
             itensSalvosDiv.innerHTML = '<p>Erro ao carregar orçamentos.</p>';
         }
-    }
-    
-    // Auxiliares
-    
-    // Formatar data
-    function formatarData(dataString) {
-        try {
-            const data = new Date(dataString);
-            return data.toLocaleDateString('pt-BR');
-        } catch (erro) {
-            return "Data inválida";
-        }
-    }
-    
-    // Formatar moeda
-    function formatarMoeda(valor, moeda = 'BRL') {
-        try {
-            return new Intl.NumberFormat('pt-BR', { 
-                style: 'currency', 
-                currency: moeda 
-            }).format(valor);
-        } catch (erro) {
-            return valor + " " + moeda;
-        }
-    }
-    
-    // Mostrar notificação
-    function mostrarNotificacao(mensagem, tipo = 'success') {
-        const notificacao = document.getElementById('notification');
-        notificacao.textContent = mensagem;
-        notificacao.style.backgroundColor = tipo === 'error' ? '#e63946' : '#0d838c';
-        notificacao.classList.add('show');
-        
-        setTimeout(() => {
-            notificacao.classList.remove('show');
-        }, 3000);
-    }
-    
-    // Definir botão de visualização ativo
-    function setActiveViewButton(buttonId) {
-        document.getElementById('cardViewBtn').classList.remove('active');
-        document.getElementById('tableViewBtn').classList.remove('active');
-        document.getElementById(buttonId).classList.add('active');
     }
     
     // Filtrar orçamentos
@@ -1789,16 +1817,176 @@ document.getElementById('compartilharBtn').addEventListener('click', compartilha
         carregarItensSalvos();
     }
     
+    // Excluir item
+    function excluirItem(id, confirmar = true) {
+        if (confirmar && !confirm('Tem certeza que deseja excluir este orçamento?')) {
+            return;
+        }
+        
+        // Obter itens salvos
+        let itensSalvos = JSON.parse(localStorage.getItem('calculadoraLucro')) || [];
+        
+        // Filtrar item a ser excluído
+        itensSalvos = itensSalvos.filter(item => item.id != id);
+        
+        // Salvar no localStorage
+        localStorage.setItem('calculadoraLucro', JSON.stringify(itensSalvos));
+        
+        // Recarregar lista de itens
+        carregarItensSalvos();
+        
+        if (confirmar) {
+            mostrarNotificacao('Orçamento excluído com sucesso!');
+        }
+    }
+    
+    // Editar item
+    function editarItem(id) {
+        // Obter itens salvos
+        const itensSalvos = JSON.parse(localStorage.getItem('calculadoraLucro')) || [];
+        
+        // Encontrar item pelo id
+        const item = itensSalvos.find(item => item.id == id);
+        
+        if (!item) {
+            mostrarNotificacao('Item não encontrado!', 'error');
+            return;
+        }
+        
+        // Preencher formulário com dados do item
+        document.getElementById('nomeProduto').value = item.nomeProduto;
+        document.getElementById('dataCotacao').value = item.dataCotacao;
+        document.getElementById('custoDolar').value = item.custoDolar;
+        document.getElementById('cotacaoDolar').value = item.cotacaoDolar;
+        document.getElementById('margemLucro').value = item.margemLucro;
+        document.getElementById('quantidade').value = item.quantidade || 1;
+        document.getElementById('observacoes').value = item.observacoes || '';
+        
+        if (item.metodoPagamento) {
+            document.getElementById('metodoPagamento').value = item.metodoPagamento;
+            toggleTaxaDisplay(); // Atualizar exibição de taxas
+        }
+        
+        if (item.clienteId) {
+            document.getElementById('clienteSelect').value = item.clienteId;
+        }
+        
+        // Calcular preço para mostrar resultado
+        calcularPreco();
+        
+        // Pegar o botão de salvar que foi criado ao calcular o preço
+        const salvarBtn = document.getElementById('salvarBtn');
+        
+        // Atualizar texto e evento do botão
+        salvarBtn.innerHTML = '<i class="fas fa-save"></i> Salvar Edição';
+        
+        // Remover eventos anteriores
+        const novoSalvarBtn = salvarBtn.cloneNode(true);
+        salvarBtn.parentNode.replaceChild(novoSalvarBtn, salvarBtn);
+        
+        // Adicionar novo evento
+        novoSalvarBtn.addEventListener('click', function() {
+            // Remover item antigo
+            excluirItem(id, false);
+            
+            // Salvar novo item
+            salvarItem(window.calculoAtual);
+            
+            mostrarNotificacao('Orçamento atualizado com sucesso!');
+        });
+    }
+    
     // Exportar para CSV
     function exportarCSV() {
-        console.log("Exportando para CSV...");
-        mostrarNotificacao('Função em desenvolvimento');
+        const itensSalvos = JSON.parse(localStorage.getItem('calculadoraLucro')) || [];
+        
+        if (itensSalvos.length === 0) {
+            mostrarNotificacao('Não há orçamentos para exportar.', 'error');
+            return;
+        }
+        
+        // Criar cabeçalho
+        let csv = 'Nome do Produto,Data da Cotação,Custo em Dólar,Cotação do Dólar,Custo em Reais,Margem de Lucro,Preço Final,Quantidade,Método de Pagamento,Lucro Real,Percentual de Lucro,Cliente,Observações\n';
+        
+        // Adicionar dados
+        itensSalvos.forEach(item => {
+            const metodoPagamento = item.metodoPagamento === 'pix' ? 'Pix' : 'Cartão';
+            const quantidade = item.quantidade || 1;
+            
+            csv += `"${item.nomeProduto.replace(/"/g, '""')}",`;
+            csv += `"${formatarData(item.dataCotacao)}",`;
+            csv += `"${item.custoDolar}",`;
+            csv += `"${item.cotacaoDolar}",`;
+            csv += `"${item.custoReais ? item.custoReais.toFixed(2) : '0.00'}",`;
+            csv += `"${item.margemLucro}%",`;
+            csv += `"${item.precoFinal ? item.precoFinal.toFixed(2) : '0.00'}",`;
+            csv += `"${quantidade}",`;
+            csv += `"${metodoPagamento}",`;
+            csv += `"${(item.lucroReal || 0).toFixed(2)}",`;
+            csv += `"${(item.percentualLucroReal || 0).toFixed(2)}%",`;
+            csv += `"${(item.clienteNome || '').replace(/"/g, '""')}",`;
+            csv += `"${(item.observacoes || '').replace(/"/g, '""')}"\n`;
+        });
+        
+        // Criar arquivo para download
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'orcamentos_led_line_br_parts.csv');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        mostrarNotificacao('Arquivo CSV exportado com sucesso!');
     }
     
     // Exportar para Excel
     function exportarExcel() {
-        console.log("Exportando para Excel...");
-        mostrarNotificacao('Função em desenvolvimento');
+        // Usa o mesmo método CSV mas muda a extensão para xls
+        const itensSalvos = JSON.parse(localStorage.getItem('calculadoraLucro')) || [];
+        
+        if (itensSalvos.length === 0) {
+            mostrarNotificacao('Não há orçamentos para exportar.', 'error');
+            return;
+        }
+        
+        // Criar cabeçalho
+        let csv = 'Nome do Produto,Data da Cotação,Custo em Dólar,Cotação do Dólar,Custo em Reais,Margem de Lucro,Preço Final,Quantidade,Método de Pagamento,Lucro Real,Percentual de Lucro,Cliente,Observações\n';
+        
+        // Adicionar dados
+        itensSalvos.forEach(item => {
+            const metodoPagamento = item.metodoPagamento === 'pix' ? 'Pix' : 'Cartão';
+            const quantidade = item.quantidade || 1;
+            
+            csv += `"${item.nomeProduto.replace(/"/g, '""')}",`;
+            csv += `"${formatarData(item.dataCotacao)}",`;
+            csv += `"${item.custoDolar}",`;
+            csv += `"${item.cotacaoDolar}",`;
+            csv += `"${item.custoReais ? item.custoReais.toFixed(2) : '0.00'}",`;
+            csv += `"${item.margemLucro}%",`;
+            csv += `"${item.precoFinal ? item.precoFinal.toFixed(2) : '0.00'}",`;
+            csv += `"${quantidade}",`;
+            csv += `"${metodoPagamento}",`;
+            csv += `"${(item.lucroReal || 0).toFixed(2)}",`;
+            csv += `"${(item.percentualLucroReal || 0).toFixed(2)}%",`;
+            csv += `"${(item.clienteNome || '').replace(/"/g, '""')}",`;
+            csv += `"${(item.observacoes || '').replace(/"/g, '""')}"\n`;
+        });
+        
+        // Criar arquivo para download
+        const blob = new Blob([csv], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.setAttribute('href', url);
+        link.setAttribute('download', 'orcamentos_led_line_br_parts.xls');
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        mostrarNotificacao('Arquivo Excel exportado com sucesso!');
     }
     
     // Limpar todos os dados
@@ -1810,6 +1998,150 @@ document.getElementById('compartilharBtn').addEventListener('click', compartilha
         }
     }
     
+    // Abrir modal de cliente
+    function abrirModalCliente() {
+        document.getElementById('clientModal').style.display = 'block';
+    }
+    
+    // Salvar cliente
+    function salvarCliente() {
+        const nome = document.getElementById('clientName').value;
+        const email = document.getElementById('clientEmail').value;
+        const telefone = document.getElementById('clientPhone').value;
+        const observacoes = document.getElementById('clientNotes').value;
+        
+        // Validar nome
+        if (!nome) {
+            mostrarNotificacao('Por favor, informe o nome do cliente.', 'error');
+            return;
+        }
+        
+        // Criar objeto do cliente
+        const cliente = {
+            id: Date.now(),
+            nome,
+            email,
+            telefone,
+            observacoes,
+            dataCadastro: new Date().toISOString()
+        };
+        
+        // Carregar clientes salvos
+        let clientes = JSON.parse(localStorage.getItem('calculadoraClientes')) || [];
+        
+        // Adicionar novo cliente
+        clientes.push(cliente);
+        
+        // Salvar no localStorage
+        localStorage.setItem('calculadoraClientes', JSON.stringify(clientes));
+        
+        // Fechar modal
+        document.getElementById('clientModal').style.display = 'none';
+        
+        // Recarregar clientes
+        carregarClientes();
+        
+        mostrarNotificacao('Cliente salvo com sucesso!');
+    }
+    
+    // Carregar clientes
+    function carregarClientes() {
+        const clientes = JSON.parse(localStorage.getItem('calculadoraClientes')) || [];
+        clientesData = clientes;
+        
+        // Atualizar select de clientes
+        atualizarSelectClientes();
+        
+        // Exibir clientes na aba de clientes
+        const clientList = document.getElementById('clientList');
+        
+        if (clientes.length === 0) {
+            clientList.innerHTML = '<p>Nenhum cliente cadastrado ainda.</p>';
+            return;
+        }
+        
+        let html = '';
+        
+        clientes.forEach(cliente => {
+            html += `
+                <div class="client-item">
+                    <div>
+                        <h4 style="margin: 0; color: var(--primary);">${cliente.nome}</h4>
+                        <p style="margin: 5px 0 0 0; font-size: 0.9rem;">
+                            ${cliente.email ? `<span><i class="fas fa-envelope"></i> ${cliente.email}</span>` : ''}
+                            ${cliente.telefone ? `<span style="margin-left: 10px;"><i class="fas fa-phone"></i> ${cliente.telefone}</span>` : ''}
+                        </p>
+                    </div>
+                    <div>
+                        <button class="btn-small edit-client-btn" data-id="${cliente.id}" style="background-color: var(--warning);"><i class="fas fa-edit"></i></button>
+                        <button class="btn-small delete-client-btn" data-id="${cliente.id}" style="background-color: var(--danger);"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `;
+        });
+        
+        clientList.innerHTML = html;
+    }
+    
+    // Filtrar clientes
+    function filtrarClientes() {
+        const filtro = document.getElementById('filtroClientes').value.trim().toLowerCase();
+        let clientes = JSON.parse(localStorage.getItem('calculadoraClientes')) || [];
+        
+        if (filtro) {
+            clientes = clientes.filter(cliente => 
+                cliente.nome.toLowerCase().includes(filtro) || 
+                (cliente.email && cliente.email.toLowerCase().includes(filtro)) ||
+                (cliente.telefone && cliente.telefone.includes(filtro))
+            );
+        }
+        
+        const clientList = document.getElementById('clientList');
+        
+        if (clientes.length === 0) {
+            clientList.innerHTML = '<p>Nenhum cliente encontrado.</p>';
+            return;
+        }
+        
+        let html = '';
+        
+        clientes.forEach(cliente => {
+            html += `
+                <div class="client-item">
+                    <div>
+                        <h4 style="margin: 0; color: var(--primary);">${cliente.nome}</h4>
+                        <p style="margin: 5px 0 0 0; font-size: 0.9rem;">
+                            ${cliente.email ? `<span><i class="fas fa-envelope"></i> ${cliente.email}</span>` : ''}
+                            ${cliente.telefone ? `<span style="margin-left: 10px;"><i class="fas fa-phone"></i> ${cliente.telefone}</span>` : ''}
+                        </p>
+                    </div>
+                    <div>
+                        <button class="btn-small edit-client-btn" data-id="${cliente.id}" style="background-color: var(--warning);"><i class="fas fa-edit"></i></button>
+                        <button class="btn-small delete-client-btn" data-id="${cliente.id}" style="background-color: var(--danger);"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `;
+        });
+        
+        clientList.innerHTML = html;
+    }
+    
+    // Atualizar select de clientes
+    function atualizarSelectClientes() {
+        const select = document.getElementById('clienteSelect');
+        const clientes = JSON.parse(localStorage.getItem('calculadoraClientes')) || [];
+        
+        // Manter a opção vazia
+        let html = '<option value="">Selecione um cliente</option>';
+        
+        // Adicionar opções de clientes
+        clientes.forEach(cliente => {
+            html += `<option value="${cliente.id}">${cliente.nome}</option>`;
+        });
+        
+        select.innerHTML = html;
+    }
+    
     // Login
     function abrirModalLogin() {
         document.getElementById('loginModal').style.display = 'block';
@@ -1817,112 +2149,535 @@ document.getElementById('compartilharBtn').addEventListener('click', compartilha
     
     // Login
     function fazerLogin() {
-        mostrarNotificacao('Função de login em desenvolvimento');
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        
+        if (!email || !password) {
+            mostrarNotificacao('Preencha email e senha', 'error');
+            return;
+        }
+        
+        // Simula login bem-sucedido
+        document.getElementById('loginModal').style.display = 'none';
+        document.getElementById('loginStatusBtn').style.display = 'none';
+        document.getElementById('userInfo').style.display = 'block';
+        document.getElementById('userInfo').innerHTML = `
+            <span style="margin-right: 10px;">${email}</span>
+            <button id="logoutBtn" class="btn-small" style="background-color: #6c757d;">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        `;
+        
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            document.getElementById('loginStatusBtn').style.display = 'block';
+            document.getElementById('userInfo').style.display = 'none';
+            mostrarNotificacao('Logout realizado com sucesso!');
+        });
+        
+        mostrarNotificacao('Login realizado com sucesso!');
     }
     
     // Registro
     function registrarUsuario() {
-        mostrarNotificacao('Função de registro em desenvolvimento');
-    }
-    
-    // Cliente
-    function abrirModalCliente() {
-        document.getElementById('clientModal').style.display = 'block';
-    }
-    
-    // Salvar cliente
-  // Salvar cliente
-function salvarCliente() {
-    const nome = document.getElementById('clientName').value;
-    const email = document.getElementById('clientEmail').value;
-    const telefone = document.getElementById('clientPhone').value;
-    const observacoes = document.getElementById('clientNotes').value;
-    
-    // Validar nome
-    if (!nome) {
-        mostrarNotificacao('Por favor, informe o nome do cliente.', 'error');
-        return;
-    }
-    
-    // Criar objeto do cliente
-    const cliente = {
-        id: Date.now(),
-        nome,
-        email,
-        telefone,
-        observacoes,
-        dataCadastro: new Date().toISOString()
-    };
-    
-    // Carregar clientes salvos
-    let clientes = JSON.parse(localStorage.getItem('calculadoraClientes')) || [];
-    
-    // Adicionar novo cliente
-    clientes.push(cliente);
-    
-    // Salvar no localStorage
-    localStorage.setItem('calculadoraClientes', JSON.stringify(clientes));
-    
-    // Fechar modal
-    document.getElementById('clientModal').style.display = 'none';
-    
-    // Atualizar select de clientes
-    let selectClientes = document.getElementById('clienteSelect');
-    let html = '<option value="">Selecione um cliente</option>';
-    clientes.forEach(c => {
-        html += `<option value="${c.id}">${c.nome}</option>`;
-    });
-    selectClientes.innerHTML = html;
-    
-    mostrarNotificacao('Cliente salvo com sucesso!');
-}
-    }
-    </script>
-    
-    <!-- Script de correção para garantir que os eventos sejam aplicados corretamente -->
-    <script>
-        // Verificação secundária para garantir que os botões funcionem
-        window.addEventListener('load', function() {
-            console.log('Script de verificação carregado');
-            
-            // Se o calcular não tiver funcionado, re-aplicar evento
-            setTimeout(function() {
-                const calcBtn = document.getElementById('calcularBtn');
-                if (calcBtn) {
-                    console.log('Reaplicando evento ao botão de cálculo');
-                    
-                    // Clonar e substituir para garantir evento limpo
-                    const novoCalcBtn = calcBtn.cloneNode(true);
-                    calcBtn.parentNode.replaceChild(novoCalcBtn, calcBtn);
-                    
-                    // Adicionar evento
-                    novoCalcBtn.addEventListener('click', calcularPreco);
-                }
-            }, 1000);
-        });
-    </script>
-    
-    <!-- Service Worker com tratamento melhorado -->
-    <script>
-        // Verificar disponibilidade do Service Worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', function() {
-                // Primeiro tentar atualizar qualquer Service Worker existente
-                navigator.serviceWorker.getRegistrations().then(function(registrations) {
-                    for (let registration of registrations) {
-                        registration.update();
-                        console.log('Service Worker atualizado');
-                    }
-                    
-                    // Registrar ou re-registrar o Service Worker após um pequeno atraso
-                    setTimeout(function() {
-                        navigator.serviceWorker.register('./sw.js')
-                            .then(reg => console.log('Service Worker registrado com sucesso'))
-                            .catch(err => console.error('Erro ao registrar Service Worker:', err));
-                    }, 1000);
-                });
-            });
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+        
+        if (!email || !password) {
+            mostrarNotificacao('Preencha email e senha', 'error');
+            return;
         }
+        
+        if (password.length < 6) {
+            mostrarNotificacao('A senha deve ter pelo menos 6 caracteres', 'error');
+            return;
+        }
+        
+        // Simula registro bem-sucedido
+        document.getElementById('loginModal').style.display = 'none';
+        document.getElementById('loginStatusBtn').style.display = 'none';
+        document.getElementById('userInfo').style.display = 'block';
+        document.getElementById('userInfo').innerHTML = `
+            <span style="margin-right: 10px;">${email}</span>
+            <button id="logoutBtn" class="btn-small" style="background-color: #6c757d;">
+                <i class="fas fa-sign-out-alt"></i>
+            </button>
+        `;
+        
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            document.getElementById('loginStatusBtn').style.display = 'block';
+            document.getElementById('userInfo').style.display = 'none';
+            mostrarNotificacao('Logout realizado com sucesso!');
+        });
+        
+        mostrarNotificacao('Conta criada com sucesso!');
+    }
+    
+    // Definir botão de visualização ativo
+    function setActiveViewButton(buttonId) {
+        document.getElementById('cardViewBtn').classList.remove('active');
+        document.getElementById('tableViewBtn').classList.remove('active');
+        document.getElementById(buttonId).classList.add('active');
+    }
+    
+     // Formatar moeda
+    function formatarMoeda(valor, moeda = 'BRL') {
+        try {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: moeda
+            }).format(valor);
+        } catch (erro) {
+            return "Valor inválido";
+        }
+    }
+    
+    // Exibir notificação
+    function mostrarNotificacao(mensagem, tipo = 'success') {
+        const notification = document.getElementById('notification');
+        notification.textContent = mensagem;
+        notification.className = 'notification';
+        
+        if (tipo === 'error') {
+            notification.style.backgroundColor = '#dc3545';
+        } else {
+            notification.style.backgroundColor = 'var(--primary)';
+        }
+        
+        notification.classList.add('show');
+        
+        // Esconder após 3 segundos
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+    
+    // Inicializar Firebase (configuração fictícia)
+    function initFirebase() {
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "your-app.firebaseapp.com",
+            projectId: "your-project-id",
+            storageBucket: "your-app.appspot.com",
+            messagingSenderId: "your-messaging-sender-id",
+            appId: "your-app-id"
+        };
+        
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+    }
+    
+    // Gráfico de distribuição de preço
+    function criarGraficoDistribuicao(custoProduto, lucro, taxas) {
+        const ctx = document.getElementById('graficoDistribuicao').getContext('2d');
+        
+        // Destruir gráfico anterior se existir
+        if (currentChart) {
+            currentChart.destroy();
+        }
+        
+        // Calcular valores
+        const taxasTotal = taxas.reduce((acc, curr) => acc + curr.valor, 0);
+        const total = custoProduto + lucro + taxasTotal;
+        
+        // Dados para o gráfico
+        const data = {
+            labels: ['Custo do Produto', 'Lucro', ...taxas.map(t => t.nome)],
+            datasets: [{
+                data: [custoProduto, lucro, ...taxas.map(t => t.valor)],
+                backgroundColor: [
+                    '#4e73df',  // Azul para custo
+                    '#1cc88a',  // Verde para lucro
+                    '#f6c23e',  // Amarelo
+                    '#e74a3b',  // Vermelho
+                    '#36b9cc'   // Ciano
+                ],
+                borderWidth: 1
+            }]
+        };
+        
+        // Configuração do gráfico
+        const config = {
+            type: 'pie',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            color: getComputedStyle(document.documentElement).getPropertyValue('--text'),
+                            font: {
+                                family: "'Poppins', sans-serif",
+                                size: 12
+                            },
+                            generateLabels: function(chart) {
+                                const data = chart.data;
+                                if (data.labels.length && data.datasets.length) {
+                                    return data.labels.map(function(label, i) {
+                                        const value = data.datasets[0].data[i];
+                                        const percentage = ((value / total) * 100).toFixed(1);
+                                        return {
+                                            text: `${label}: ${formatarMoeda(value)} (${percentage}%)`,
+                                            fillStyle: data.datasets[0].backgroundColor[i],
+                                            strokeStyle: data.datasets[0].backgroundColor[i],
+                                            lineWidth: 0,
+                                            index: i
+                                        };
+                                    });
+                                }
+                                return [];
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const percentage = ((value / total) * 100).toFixed(1);
+                                return `${label}: ${formatarMoeda(value)} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        
+        // Criar gráfico
+        currentChart = new Chart(ctx, config);
+    }
+    
+    // Gráfico de cotação do dólar
+    function criarGraficoCotacao() {
+        const ctx = document.getElementById('cotacaoChart').getContext('2d');
+        const historico = JSON.parse(localStorage.getItem('cotacaoHistorico')) || [];
+        
+        // Destruir gráfico anterior se existir
+        if (cotacaoChart) {
+            cotacaoChart.destroy();
+        }
+        
+        if (historico.length === 0) {
+            return;
+        }
+        
+        // Formatar datas e ordenar cronologicamente
+        const dadosOrdenados = historico
+            .map(item => ({
+                data: new Date(item.data),
+                valor: item.valor
+            }))
+            .sort((a, b) => a.data - b.data);
+        
+        // Extrair dados para o gráfico
+        const labels = dadosOrdenados.map(item => item.data.toLocaleDateString('pt-BR'));
+        const valores = dadosOrdenados.map(item => item.valor);
+        
+        // Dados para o gráfico
+        const data = {
+            labels: labels,
+            datasets: [{
+                label: 'Cotação do Dólar (R$)',
+                data: valores,
+                borderColor: '#0d838c',
+                backgroundColor: 'rgba(13, 131, 140, 0.1)',
+                tension: 0.3,
+                fill: true
+            }]
+        };
+        
+        // Configuração do gráfico
+        const config = {
+            type: 'line',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: {
+                            color: getComputedStyle(document.documentElement).getPropertyValue('--text'),
+                            font: {
+                                family: "'Poppins', sans-serif"
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `Cotação: ${formatarMoeda(context.raw, 'BRL')}`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)',
+                        },
+                        ticks: {
+                            color: getComputedStyle(document.documentElement).getPropertyValue('--text')
+                        }
+                    },
+                    y: {
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)',
+                        },
+                        ticks: {
+                            color: getComputedStyle(document.documentElement).getPropertyValue('--text'),
+                            callback: function(value) {
+                                return formatarMoeda(value, 'BRL');
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        
+        // Criar gráfico
+        cotacaoChart = new Chart(ctx, config);
+    }
+    
+    // Gráfico de distribuição de métodos de pagamento
+    function criarGraficoMetodosPagamento() {
+        const ctx = document.getElementById('paymentMethodChart').getContext('2d');
+        const orcamentos = JSON.parse(localStorage.getItem('calculadoraLucro')) || [];
+        
+        // Destruir gráfico anterior se existir
+        if (paymentMethodChart) {
+            paymentMethodChart.destroy();
+        }
+        
+        if (orcamentos.length === 0) {
+            return;
+        }
+        
+        // Contar métodos de pagamento
+        const metodos = {
+            'cartao': 0,
+            'pix': 0
+        };
+        
+        orcamentos.forEach(item => {
+            if (item.metodoPagamento) {
+                metodos[item.metodoPagamento]++;
+            } else {
+                // Se não tiver método, assume que é cartão
+                metodos['cartao']++;
+            }
+        });
+        
+        // Dados para o gráfico
+        const data = {
+            labels: ['Cartão de Crédito', 'Pix'],
+            datasets: [{
+                data: [metodos.cartao, metodos.pix],
+                backgroundColor: ['#4e73df', '#36b9cc'],
+                hoverBackgroundColor: ['#2e59d9', '#2c9faf'],
+                hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }]
+        };
+        
+        // Configuração do gráfico
+        const config = {
+            type: 'doughnut',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            color: getComputedStyle(document.documentElement).getPropertyValue('--text'),
+                            font: {
+                                family: "'Poppins', sans-serif"
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        
+        // Criar gráfico
+        paymentMethodChart = new Chart(ctx, config);
+    }
+    
+    // Gráfico de orçamentos por mês
+    function criarGraficoOrcamentosMensal() {
+        const ctx = document.getElementById('monthlyBudgetChart').getContext('2d');
+        const orcamentos = JSON.parse(localStorage.getItem('calculadoraLucro')) || [];
+        
+        // Destruir gráfico anterior se existir
+        if (monthlyBudgetChart) {
+            monthlyBudgetChart.destroy();
+        }
+        
+        if (orcamentos.length === 0) {
+            return;
+        }
+        
+        // Agrupar por mês
+        const orcamentosPorMes = {};
+        const valorPorMes = {};
+        
+        orcamentos.forEach(item => {
+            // Usar a data de criação ou atual
+            const data = new Date(item.dataCriacao || new Date().toISOString());
+            const mes = `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, '0')}`;
+            
+            // Incrementar contagem
+            if (!orcamentosPorMes[mes]) {
+                orcamentosPorMes[mes] = 0;
+                valorPorMes[mes] = 0;
+            }
+            
+            orcamentosPorMes[mes]++;
+            
+            // Adicionar valor total
+            const precoTotal = (item.precoFinal || 0) * (item.quantidade || 1);
+            valorPorMes[mes] += precoTotal;
+        });
+        
+        // Ordenar meses
+        const mesesOrdenados = Object.keys(orcamentosPorMes).sort();
+        
+        // Converter para rótulos mais amigáveis
+        const mesesLabels = mesesOrdenados.map(mes => {
+            const [ano, mesNum] = mes.split('-');
+            const meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+            return `${meses[parseInt(mesNum) - 1]}/${ano}`;
+        });
+        
+        // Dados para o gráfico
+        const data = {
+            labels: mesesLabels,
+            datasets: [
+                {
+                    label: 'Quantidade de Orçamentos',
+                    data: mesesOrdenados.map(mes => orcamentosPorMes[mes]),
+                    borderColor: '#0d838c',
+                    backgroundColor: 'rgba(13, 131, 140, 0.5)',
+                    yAxisID: 'y',
+                    type: 'bar'
+                },
+                {
+                    label: 'Valor Total (R$)',
+                    data: mesesOrdenados.map(mes => valorPorMes[mes]),
+                    borderColor: '#e74a3b',
+                    backgroundColor: 'rgba(231, 74, 59, 0)',
+                    borderWidth: 2,
+                    type: 'line',
+                    yAxisID: 'y1'
+                }
+            ]
+        };
+        
+        // Configuração do gráfico
+        const config = {
+            type: 'bar',
+            data: data,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            color: getComputedStyle(document.documentElement).getPropertyValue('--text'),
+                            font: {
+                                family: "'Poppins', sans-serif"
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)',
+                        },
+                        ticks: {
+                            color: getComputedStyle(document.documentElement).getPropertyValue('--text')
+                        }
+                    },
+                    y: {
+                        type: 'linear',
+                        display: true,
+                        position: 'left',
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.1)',
+                        },
+                        ticks: {
+                            color: getComputedStyle(document.documentElement).getPropertyValue('--text')
+                        }
+                    },
+                    y1: {
+                        type: 'linear',
+                        display: true,
+                        position: 'right',
+                        grid: {
+                            drawOnChartArea: false,
+                        },
+                        ticks: {
+                            color: getComputedStyle(document.documentElement).getPropertyValue('--text'),
+                            callback: function(value) {
+                                return formatarMoeda(value, 'BRL');
+                            }
+                        }
+                    }
+                }
+            }
+        };
+        
+        // Criar gráfico
+        monthlyBudgetChart = new Chart(ctx, config);
+    }
+    
+    // Atualizar dashboard
+    function atualizarDashboard() {
+        const orcamentos = JSON.parse(localStorage.getItem('calculadoraLucro')) || [];
+        
+        // Atualizar contagem de orçamentos
+        document.getElementById('totalOrcamentos').textContent = orcamentos.length;
+        
+        // Calcular valor total
+        const valorTotal = orcamentos.reduce((total, item) => {
+            return total + ((item.precoFinal || 0) * (item.quantidade || 1));
+        }, 0);
+        
+        document.getElementById('valorTotal').textContent = formatarMoeda(valorTotal, 'BRL');
+        
+        // Atualizar gráficos
+        criarGraficoMetodosPagamento();
+        criarGraficoOrcamentosMensal();
+    }
+    
+    // Verificar alterações na tab ativa
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', function() {
+            const tabId = this.getAttribute('data-tab');
+            
+            if (tabId === 'history') {
+                criarGraficoCotacao();
+            } else if (tabId === 'dashboard') {
+                atualizarDashboard();
+            }
+        });
+    });
+    
+    // Para adicionar suporte a PWA
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('service-worker.js')
+                .then(registration => {
+                    console.log('ServiceWorker registrado com sucesso:', registration.scope);
+                })
+                .catch(error => {
+                    console.log('Falha ao registrar ServiceWorker:', error);
+                });
+        });
+    }
     </script>
-</body>
-</html>
