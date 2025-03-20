@@ -1202,6 +1202,11 @@
     
     // Adicionar todos os event listeners
     function addEventListeners() {
+        // Botão de atualizar dólar
+const atualizarDolarBtn = document.getElementById('atualizarDolarBtn');
+if (atualizarDolarBtn) {
+    atualizarDolarBtn.addEventListener('click', atualizarCotacaoDolar);
+}
         // Configurar sistema de abas
         setupTabs();
         
@@ -1620,6 +1625,8 @@ LED LINE BR PARTS`;
                 precoTotalFinal,
                 dataCriacao: new Date().toISOString()
             };
+            // Adicionar evento ao botão compartilhar
+document.getElementById('compartilharBtn').addEventListener('click', compartilharWhatsApp);
             
             // Recria botão de salvar para garantir um evento limpo
             const salvarBtnContainer = document.createElement('div');
