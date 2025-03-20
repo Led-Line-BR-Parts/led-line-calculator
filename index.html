@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LED LINE BR PARTS - CALCULADORA</title>
-
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-<link rel="manifest" href="/site.webmanifest">
     
-    <!-- PWA Meta Tags -->
+    <!-- PWA Meta Tags Corrigidas -->
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="LED LINE Calculadora">
-    <link rel="apple-touch-icon" href="icon-192.png">
     <meta name="theme-color" content="#0d838c">
-    <link rel="manifest" href="manifest.json">
+    
+    <!-- Favicons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicon-16x16.png">
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="manifest" href="site.webmanifest">
     
     <!-- Fonts e CSS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1164,45 +1164,17 @@
     let clientesData = [];
     let usuarioAtual = null;
     
-    // Firebase config - SUBSTITUA COM SUAS CREDENCIAIS DO FIREBASE
-    const firebaseConfig = {
-        apiKey: "AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-        authDomain: "led-line-calculator.firebaseapp.com",
-        projectId: "led-line-calculator",
-        storageBucket: "led-line-calculator.appspot.com", 
-        messagingSenderId: "000000000000",
-        appId: "1:000000000000:web:000000000000000000000"
-    };
-    
     // Inicialização quando o DOM estiver carregado
     document.addEventListener('DOMContentLoaded', function() {
-        // Inicialização do Firebase (comentado até você configurar)
-        // firebase.initializeApp(firebaseConfig);
-        
-        // Configurar sistema de abas
-        setupTabs();
+        // Inicializar configurações
+        initConfig();
         
         // Definir data atual no campo de data
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('dataCotacao').value = today;
         
-        // Inicializar configurações
-        initConfig();
-        
-        // Buscar cotação do dólar atual
-        atualizarCotacaoDolar();
-        
-        // Carregar histórico de cotações
-        carregarHistoricoCotacao();
-        
         // Carregar itens salvos
         carregarItensSalvos();
-        
-        // Carregar clientes
-        carregarClientes();
-        
-        // Atualizar dashboard
-        atualizarDashboard();
         
         // Adicionar eventos aos botões
         addEventListeners();
@@ -1224,65 +1196,110 @@
                 // Ativar a aba selecionada
                 button.classList.add('active');
                 document.getElementById(tabId).classList.add('active');
-                
-                // Atualizar gráficos específicos da aba
-                if (tabId === 'history') {
-                    atualizarGraficoCotacao();
-                } else if (tabId === 'dashboard') {
-                    atualizarDashboard();
-                }
             });
         });
     }
     
     // Adicionar todos os event listeners
     function addEventListeners() {
+        // Configurar sistema de abas
+        setupTabs();
+        
         // Botões da calculadora
         document.getElementById('calcularBtn').addEventListener('click', calcularPreco);
         document.getElementById('editarTaxasBtn').addEventListener('click', toggleTaxasForm);
         document.getElementById('salvarTaxasBtn').addEventListener('click', salvarTaxas);
         document.getElementById('theme-toggle').addEventListener('change', toggleTheme);
-        document.getElementById('atualizarDolarBtn').addEventListener('click', atualizarCotacaoDolar);
-        document.getElementById('metodoPagamento').addEventListener('change', toggleTaxaDisplay);
-        document.getElementById('addClienteBtn').addEventListener('click', abrirModalCliente);
+        
+        // Adicionar evento para método de pagamento
+        const metodoPagamento = document.getElementById('metodoPagamento');
+        if (metodoPagamento) {
+            metodoPagamento.addEventListener('change', toggleTaxaDisplay);
+        }
+        
+        // Botão de atualizar dólar
+        const atualizarDolarBtn = document.getElementById('atualizarDolarBtn');
+        if (atualizarDolarBtn) {
+            atualizarDolarBtn.addEventListener('click', atualizarCotacaoDolar);
+        }
         
         // Botões de orçamentos salvos
         document.getElementById('buscarBtn').addEventListener('click', filtrarOrcamentos);
-        document.getElementById('filtroOrcamentos').addEventListener('keyup', function(event) {
-            if (event.key === 'Enter') {
-                filtrarOrcamentos();
-            }
-        });
-        document.getElementById('exportarCSVBtn').addEventListener('click', exportarCSV);
-        document.getElementById('exportarExcelBtn').addEventListener('click', exportarExcel);
-        document.getElementById('limparDadosBtn').addEventListener('click', limparDados);
-        document.getElementById('cardViewBtn').addEventListener('click', function() {
-            setActiveViewButton('cardViewBtn');
-            carregarItensSalvos('card');
-        });
-        document.getElementById('tableViewBtn').addEventListener('click', function() {
-            setActiveViewButton('tableViewBtn');
-            carregarItensSalvos('table');
-        });
+        
+        // Adicionar evento ao filtro
+        const filtroOrcamentos = document.getElementById('filtroOrcamentos');
+        if (filtroOrcamentos) {
+            filtroOrcamentos.addEventListener('keyup', function(event) {
+                if (event.key === 'Enter') {
+                    filtrarOrcamentos();
+                }
+            });
+        }
+        
+        // Botões de exportação e limpeza
+        const exportarCSVBtn = document.getElementById('exportarCSVBtn');
+        if (exportarCSVBtn) {
+            exportarCSVBtn.addEventListener('click', exportarCSV);
+        }
+        
+        const exportarExcelBtn = document.getElementById('exportarExcelBtn');
+        if (exportarExcelBtn) {
+            exportarExcelBtn.addEventListener('click', exportarExcel);
+        }
+        
+        const limparDadosBtn = document.getElementById('limparDadosBtn');
+        if (limparDadosBtn) {
+            limparDadosBtn.addEventListener('click', limparDados);
+        }
+        
+        // Botões de visualização
+        const cardViewBtn = document.getElementById('cardViewBtn');
+        if (cardViewBtn) {
+            cardViewBtn.addEventListener('click', function() {
+                setActiveViewButton('cardViewBtn');
+                carregarItensSalvos('card');
+            });
+        }
+        
+        const tableViewBtn = document.getElementById('tableViewBtn');
+        if (tableViewBtn) {
+            tableViewBtn.addEventListener('click', function() {
+                setActiveViewButton('tableViewBtn');
+                carregarItensSalvos('table');
+            });
+        }
         
         // Botões de clientes
-        document.getElementById('newClientBtn').addEventListener('click', abrirModalCliente);
-        document.getElementById('saveClientBtn').addEventListener('click', salvarCliente);
-        document.getElementById('buscarClientesBtn').addEventListener('click', filtrarClientes);
+        const addClienteBtn = document.getElementById('addClienteBtn');
+        if (addClienteBtn) {
+            addClienteBtn.addEventListener('click', abrirModalCliente);
+        }
         
-        // Botões de alerta de cotação
-        document.getElementById('setAlertaBtn').addEventListener('click', definirAlertaCotacao);
+        const newClientBtn = document.getElementById('newClientBtn');
+        if (newClientBtn) {
+            newClientBtn.addEventListener('click', abrirModalCliente);
+        }
+        
+        const saveClientBtn = document.getElementById('saveClientBtn');
+        if (saveClientBtn) {
+            saveClientBtn.addEventListener('click', salvarCliente);
+        }
         
         // Botões de login
-        document.getElementById('loginStatusBtn').addEventListener('click', abrirModalLogin);
-        document.getElementById('loginBtn').addEventListener('click', fazerLogin);
-        document.getElementById('registerBtn').addEventListener('click', registrarUsuario);
+        const loginStatusBtn = document.getElementById('loginStatusBtn');
+        if (loginStatusBtn) {
+            loginStatusBtn.addEventListener('click', abrirModalLogin);
+        }
         
-        // Botões de compartilhamento
-        document.getElementById('shareWhatsapp').addEventListener('click', compartilharWhatsApp);
-        document.getElementById('shareEmail').addEventListener('click', compartilharEmail);
-        document.getElementById('sharePdf').addEventListener('click', compartilharPDF);
-        document.getElementById('shareLink').addEventListener('click', compartilharLink);
+        const loginBtn = document.getElementById('loginBtn');
+        if (loginBtn) {
+            loginBtn.addEventListener('click', fazerLogin);
+        }
+        
+        const registerBtn = document.getElementById('registerBtn');
+        if (registerBtn) {
+            registerBtn.addEventListener('click', registrarUsuario);
+        }
         
         // Fechar modais
         document.querySelectorAll('.close-modal').forEach(closeBtn => {
@@ -1295,7 +1312,11 @@
     // Alternar exibição do formulário de taxas
     function toggleTaxasForm() {
         const taxasForm = document.getElementById('taxasForm');
-        taxasForm.style.display = taxasForm.style.display === 'block' ? 'none' : 'block';
+        if (taxasForm.style.display === 'block') {
+            taxasForm.style.display = 'none';
+        } else {
+            taxasForm.style.display = 'block';
+        }
     }
     
     // Alternar exibição de taxas com base no método de pagamento
@@ -1322,8 +1343,7 @@
                 imposto: 10
             },
             tema: 'light',
-            visualizacao: 'card',
-            alertas: []
+            visualizacao: 'card'
         };
         
         // Atualizar campos com taxas salvas
@@ -1364,8 +1384,7 @@
         const config = JSON.parse(localStorage.getItem('calculadoraConfig')) || {
             taxas: {},
             tema: 'light',
-            visualizacao: 'card',
-            alertas: []
+            visualizacao: 'card'
         };
         
         // Atualizar taxas
@@ -1407,8 +1426,7 @@
                 yampi: 2.5,
                 imposto: 10
             },
-            visualizacao: 'card',
-            alertas: []
+            visualizacao: 'card'
         };
         
         config.tema = tema;
@@ -1418,11 +1436,9 @@
     // Função para buscar cotação do dólar atual via API
     async function atualizarCotacaoDolar() {
         try {
-            // Mostrar um loader no campo de cotação
-            const cotacaoInput = document.getElementById('cotacaoDolar');
-            const oldValue = cotacaoInput.value;
-            cotacaoInput.value = "Carregando...";
-            cotacaoInput.disabled = true;
+            // Mostrar um loader no botão
+            const dolarBtn = document.getElementById('atualizarDolarBtn');
+            dolarBtn.innerHTML = '<div class="loader"></div>';
             
             // Fazer requisição para a API de cotação
             const response = await fetch('https://economia.awesomeapi.com.br/json/last/USD-BRL');
@@ -1432,1618 +1448,398 @@
             const cotacao = parseFloat(data.USDBRL.bid);
             
             // Atualizar campo com o valor atual
-            cotacaoInput.value = cotacao.toFixed(2);
-            cotacaoInput.disabled = false;
+            document.getElementById('cotacaoDolar').value = cotacao.toFixed(2);
             
-            // Salvar cotação no histórico
-            salvarCotacaoHistorico(cotacao);
-            
-            // Verificar alertas de cotação
-            verificarAlertasCotacao(cotacao);
+            // Restaurar botão
+            dolarBtn.innerHTML = '<i class="fas fa-sync-alt"></i>';
             
             mostrarNotificacao('Cotação do dólar atualizada!');
         } catch (error) {
             console.error('Erro ao buscar cotação do dólar:', error);
-            document.getElementById('cotacaoDolar').value = oldValue || "";
-            document.getElementById('cotacaoDolar').disabled = false;
+            document.getElementById('atualizarDolarBtn').innerHTML = '<i class="fas fa-sync-alt"></i>';
             mostrarNotificacao('Erro ao atualizar cotação. Tente novamente.', 'error');
         }
     }
     
-    // Salvar cotação no histórico
-    function salvarCotacaoHistorico(cotacao) {
-        let historico = JSON.parse(localStorage.getItem('cotacaoHistorico')) || [];
-        
-        // Adicionar cotação atual
-        historico.push({
-            data: new Date().toISOString(),
-            valor: cotacao
-        });
-        
-        // Manter apenas os últimos 30 dias
-        if (historico.length > 30) {
-            historico = historico.slice(historico.length - 30);
-        }
-        
-        // Salvar no localStorage
-        localStorage.setItem('cotacaoHistorico', JSON.stringify(historico));
-        
-        // Atualizar variável global
-        cotacaoHistorico = historico;
-    }
-    
-    // Carregar histórico de cotações
-    function carregarHistoricoCotacao() {
-        const historico = JSON.parse(localStorage.getItem('cotacaoHistorico')) || [];
-        cotacaoHistorico = historico;
-    }
-    
-    // Atualizar gráfico de cotação
-    function atualizarGraficoCotacao() {
-        const ctx = document.getElementById('cotacaoChart').getContext('2d');
-        
-        // Formatar dados para o gráfico
-        const labels = cotacaoHistorico.map(item => {
-            const data = new Date(item.data);
-            return `${data.getDate()}/${data.getMonth() + 1}`;
-        });
-        
-        const valores = cotacaoHistorico.map(item => item.valor);
-        
-        // Destruir gráfico anterior se existir
-        if (cotacaoChart) {
-            cotacaoChart.destroy();
-        }
-        
-        // Criar novo gráfico
-        cotacaoChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Cotação do Dólar (R$)',
-                    data: valores,
-                    backgroundColor: 'rgba(13, 131, 140, 0.2)',
-                    borderColor: 'rgba(13, 131, 140, 1)',
-                    borderWidth: 2,
-                    tension: 0.3,
-                    pointRadius: 3
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: {
-                        beginAtZero: false,
-                        ticks: {
-                            callback: function(value) {
-                                return 'R$ ' + value.toFixed(2);
-                            }
-                        }
-                    }
-                },
-                plugins: {
-                    legend: {
-                        display: true,
-                        position: 'top'
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                return 'R$ ' + context.raw.toFixed(2);
-                            }
-                        }
-                    }
-                }
-            }
-        });
-        
-        // Mostrar alertas ativos
-        mostrarAlertasAtivos();
-    }
-    
-    // Definir alerta de cotação
-    function definirAlertaCotacao() {
-        const valorAlerta = parseFloat(document.getElementById('alertaValor').value);
-        
-        if (isNaN(valorAlerta) || valorAlerta <= 0) {
-            mostrarNotificacao('Por favor, insira um valor válido para o alerta.', 'error');
-            return;
-        }
-        
-        // Carregar configuração atual
-        const config = JSON.parse(localStorage.getItem('calculadoraConfig')) || {
-            taxas: {
-                parcelamento: 14.35,
-                pix: 0.79,
-                yampi: 2.5,
-                imposto: 10
-            },
-            tema: 'light',
-            visualizacao: 'card',
-            alertas: []
-        };
-        
-        // Adicionar novo alerta
-        config.alertas = config.alertas || [];
-        
-        // Verificar se já existe um alerta com esse valor
-        const alertaExistente = config.alertas.find(a => a.valor === valorAlerta);
-        
-        if (alertaExistente) {
-            mostrarNotificacao('Já existe um alerta com esse valor.', 'error');
-            return;
-        }
-        
-        config.alertas.push({
-            id: Date.now(),
-            valor: valorAlerta,
-            dataDefinicao: new Date().toISOString(),
-            ativo: true
-        });
-        
-        // Salvar configuração
-        localStorage.setItem('calculadoraConfig', JSON.stringify(config));
-        
-        // Atualizar UI
-        mostrarAlertasAtivos();
-        document.getElementById('alertaValor').value = '';
-        
-        mostrarNotificacao(`Alerta definido para R$ ${valorAlerta.toFixed(2)}`);
-    }
-    
-    // Mostrar alertas ativos
-    function mostrarAlertasAtivos() {
-        const alertasContainer = document.getElementById('alertasAtivos');
-        const config = JSON.parse(localStorage.getItem('calculadoraConfig')) || {};
-        const alertas = config.alertas || [];
-        
-        if (alertas.length === 0) {
-            alertasContainer.innerHTML = '<p>Nenhum alerta definido.</p>';
-            return;
-        }
-        
-        let html = '<h5>Alertas ativos:</h5><ul style="list-style-type: none; padding: 0;">';
-        
-        alertas.forEach(alerta => {
-            html += `
-                <li style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding: 5px 0; border-bottom: 1px solid var(--gray-light);">
-                    <div>
-                        <span class="badge ${alerta.ativo ? 'badge-primary' : 'badge-warning'}">${alerta.ativo ? 'Ativo' : 'Pausado'}</span>
-                        R$ ${alerta.valor.toFixed(2)}
-                    </div>
-                    <div>
-                        <button class="btn-small" style="background-color: #6c757d;" onclick="removerAlerta(${alerta.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </li>
-            `;
-        });
-        
-        html += '</ul>';
-        alertasContainer.innerHTML = html;
-    }
-    
-    // Remover alerta
-    function removerAlerta(id) {
-        // Carregar configuração atual
-        const config = JSON.parse(localStorage.getItem('calculadoraConfig')) || {};
-        
-        // Filtrar alertas
-        config.alertas = (config.alertas || []).filter(a => a.id !== id);
-        
-        // Salvar configuração
-        localStorage.setItem('calculadoraConfig', JSON.stringify(config));
-        
-        // Atualizar UI
-        mostrarAlertasAtivos();
-        
-        mostrarNotificacao('Alerta removido com sucesso.');
-    }
-    
-    // Verificar alertas de cotação
-    function verificarAlertasCotacao(cotacaoAtual) {
-        const config = JSON.parse(localStorage.getItem('calculadoraConfig')) || {};
-        const alertas = config.alertas || [];
-        
-        // Verificar cada alerta
-        alertas.forEach(alerta => {
-            if (alerta.ativo) {
-                // Para alertas de valor mais baixo, notifica quando a cotação cai abaixo
-                // Para alertas de valor mais alto, notifica quando a cotação sobe acima
-                const cotacaoAnterior = cotacaoHistorico.length > 1 ? cotacaoHistorico[cotacaoHistorico.length - 2]?.valor : null;
-                
-                if (cotacaoAnterior !== null) {
-                    if (cotacaoAnterior < alerta.valor && cotacaoAtual >= alerta.valor) {
-                        // Cotação subiu e passou do valor do alerta
-                        mostrarNotificacao(`Alerta: Dólar atingiu R$ ${cotacaoAtual.toFixed(2)}`, 'warning');
-                    } else if (cotacaoAnterior > alerta.valor && cotacaoAtual <= alerta.valor) {
-                        // Cotação caiu e passou do valor do alerta
-                        mostrarNotificacao(`Alerta: Dólar caiu para R$ ${cotacaoAtual.toFixed(2)}`, 'warning');
-                    }
-                }
-            }
-        });
-    }
-    
-    // Calcular preço
+    // Calcular preço - Versão simplificada para diagnóstico inicial
     function calcularPreco() {
-        // Obter valores dos campos
-        const nomeProduto = document.getElementById('nomeProduto').value;
-        const dataCotacao = document.getElementById('dataCotacao').value;
-        const custoDolar = parseFloat(document.getElementById('custoDolar').value);
-        const cotacaoDolar = parseFloat(document.getElementById('cotacaoDolar').value);
-        const margemLucro = parseFloat(document.getElementById('margemLucro').value);
-        const quantidade = parseInt(document.getElementById('quantidade').value) || 1;
-        const metodoPagamento = document.getElementById('metodoPagamento').value;
-        const clienteId = document.getElementById('clienteSelect').value;
-        const observacoes = document.getElementById('observacoes').value;
+        console.log("Função calcularPreco executando...");
         
-        // Validar inputs
-        if (!nomeProduto || !dataCotacao || isNaN(custoDolar) || isNaN(cotacaoDolar) || isNaN(margemLucro)) {
-            mostrarNotificacao('Por favor, preencha todos os campos obrigatórios.', 'error');
-            return;
-        }
-        
-        // Obter taxas personalizadas
-        const config = JSON.parse(localStorage.getItem('calculadoraConfig')) || {
-            taxas: {
-                parcelamento: 14.35,
-                pix: 0.79,
-                yampi: 2.5,
-                imposto: 10
+        try {
+            // Obter valores dos campos
+            const nomeProduto = document.getElementById('nomeProduto').value;
+            const dataCotacao = document.getElementById('dataCotacao').value;
+            const custoDolar = parseFloat(document.getElementById('custoDolar').value);
+            const cotacaoDolar = parseFloat(document.getElementById('cotacaoDolar').value);
+            const margemLucro = parseFloat(document.getElementById('margemLucro').value);
+            const quantidade = parseInt(document.getElementById('quantidade').value) || 1;
+            const metodoPagamento = document.getElementById('metodoPagamento').value;
+            
+            // Validar inputs
+            if (!nomeProduto || !dataCotacao || isNaN(custoDolar) || isNaN(cotacaoDolar) || isNaN(margemLucro)) {
+                mostrarNotificacao('Por favor, preencha todos os campos obrigatórios.', 'error');
+                return;
             }
-        };
-        
-        // Calcular custo em reais
-        const custoReais = custoDolar * cotacaoDolar;
-        
-        // Calcular preço com margem de lucro
-        const precoComMargem = custoReais * (1 + margemLucro / 100);
-        
-        // Selecionar a taxa de pagamento correta com base no método
-        let taxaPagamento, nomeTaxaPagamento;
-        if (metodoPagamento === 'pix') {
-            taxaPagamento = config.taxas.pix / 100;
-            nomeTaxaPagamento = `Taxa Pix (${config.taxas.pix}%)`;
-        } else {
-            taxaPagamento = config.taxas.parcelamento / 100;
-            nomeTaxaPagamento = `Parcelamento sem juros (${config.taxas.parcelamento}%)`;
-        }
-        
-        const taxaYampi = config.taxas.yampi / 100;
-        const taxaImposto = config.taxas.imposto / 100;
-        
-        // Fator para ajustar o preço considerando todas as taxas
-        const totalTaxas = taxaPagamento + taxaYampi + taxaImposto;
-        const precoFinal = precoComMargem / (1 - totalTaxas);
-        
-        // Calcular valores individuais das taxas
-        const valorTaxaPagamento = precoFinal * taxaPagamento;
-        const valorYampi = precoFinal * taxaYampi;
-        const valorImposto = precoFinal * taxaImposto;
-        
-        // Calcular custo do produto com as taxas
-        const custoProdutoComTaxas = custoReais / (1 - totalTaxas);
-        
-        // Calcular valor do lucro e percentual
-        const lucroReal = precoFinal - custoProdutoComTaxas;
-        const percentualLucroReal = (lucroReal / custoProdutoComTaxas) * 100;
-        
-        // Calcular valores totais para múltiplas unidades
-        const custoTotalReais = custoReais * quantidade;
-        const precoTotalFinal = precoFinal * quantidade;
-        const lucroTotalReal = lucroReal * quantidade;
-        
-        // Exibir resultado
-        const resultadoDiv = document.getElementById('resultado');
-        const resultadoDetalhes = document.getElementById('resultadoDetalhes');
-        
-        resultadoDetalhes.innerHTML = `
-            <p><strong>Nome do Produto:</strong> ${nomeProduto}</p>
-            <p><strong>Data da Cotação:</strong> ${formatarData(dataCotacao)}</p>
-            <p><strong>Custo em Dólar:</strong> ${formatarMoeda(custoDolar, 'USD')}</p>
-            <p><strong>Cotação do Dólar:</strong> ${formatarMoeda(cotacaoDolar, 'BRL')}</p>
-            <p><strong>Custo em Reais:</strong> ${formatarMoeda(custoReais, 'BRL')}</p>
-            <p><strong>Margem de Lucro Desejada:</strong> ${margemLucro}%</p>
-            <p><strong>Preço com Margem:</strong> ${formatarMoeda(precoComMargem, 'BRL')}</p>
-            <hr>
-            <p><strong>Taxas Aplicadas:</strong></p>
-            <ul>
-                <li><span>${nomeTaxaPagamento}:</span> <span>${formatarMoeda(valorTaxaPagamento, 'BRL')}</span></li>
-                <li><span>Yampi (${config.taxas.yampi}%):</span> <span>${formatarMoeda(valorYampi, 'BRL')}</span></li>
-                <li><span>Imposto (${config.taxas.imposto}%):</span> <span>${formatarMoeda(valorImposto, 'BRL')}</span></li>
-            </ul>
-            <hr>
-            <p><strong>Custo do Produto com Taxas:</strong> ${formatarMoeda(custoProdutoComTaxas, 'BRL')}</p>
-            <p><strong>Valor do Lucro em Reais:</strong> ${formatarMoeda(lucroReal, 'BRL')}</p>
-            <p><strong>Percentual de Lucro Real:</strong> ${percentualLucroReal.toFixed(2)}%</p>
-            <hr>
-            <p><strong>Preço Final Unitário:</strong> ${formatarMoeda(precoFinal, 'BRL')}</p>
-            <hr>
-            <p><strong>Quantidade:</strong> ${quantidade} unidades</p>
-            <p><strong>Custo Total:</strong> ${formatarMoeda(custoTotalReais, 'BRL')}</p>
-            <p><strong>Lucro Total:</strong> ${formatarMoeda(lucroTotalReal, 'BRL')}</p>
-            <p><strong>Preço Final Total:</strong> ${formatarMoeda(precoTotalFinal, 'BRL')}</p>
-        `;
-        
-        resultadoDiv.style.display = 'block';
-        
-        // Criar gráfico
-        criarGrafico(custoProdutoComTaxas, valorTaxaPagamento, valorYampi, valorImposto, lucroReal);
-        
-        // Armazenar dados do cálculo atual para compartilhamento e salvamento
-        window.calculoAtual = {
-            id: Date.now(),
-            nomeProduto,
-            dataCotacao,
-            custoDolar,
-            cotacaoDolar,
-            margemLucro,
-            custoReais,
-            precoComMargem,
-            valorTaxaPagamento,
-            valorYampi,
-            valorImposto,
-            precoFinal,
-            custoProdutoComTaxas,
-            lucroReal,
-            percentualLucroReal,
-            quantidade,
-            metodoPagamento,
-            precoTotalFinal,
-            clienteId,
-            clienteNome: clienteId ? clientesData.find(c => c.id == clienteId)?.nome : '',
-            observacoes,
-            taxas: config.taxas,
-            dataCriacao: new Date().toISOString()
-        };
-        
-        // Adicionar evento ao botão de salvar
-        document.getElementById('salvarBtn').addEventListener('click', function() {
-            salvarItem(window.calculoAtual);
-        });
-        
-        // Adicionar evento ao botão de compartilhar
-        document.getElementById('compartilharBtn').addEventListener('click', function() {
-            abrirModalCompartilhar(window.calculoAtual);
-        });
-        
-        // Rolar para o resultado
-        resultadoDiv.scrollIntoView({ behavior: 'smooth' });
-    }
-    
-    // Criar gráfico de distribuição
-    function criarGrafico(custoProduto, taxaPagamento, taxaYampi, taxaImposto, lucro) {
-        const ctx = document.getElementById('graficoDistribuicao').getContext('2d');
-        
-        // Destruir gráfico anterior se existir
-        if (currentChart) {
-            currentChart.destroy();
-        }
-        
-        // Pegar método de pagamento para definir label
-        const metodoPagamento = document.getElementById('metodoPagamento').value;
-        const taxaLabel = metodoPagamento === 'pix' ? 'Taxa Pix' : 'Parcelamento';
-        
-        // Criar novo gráfico
-        currentChart = new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: ['Custo Base', taxaLabel, 'Yampi', 'Imposto', 'Lucro'],
-                datasets: [{
-                    data: [custoProduto, taxaPagamento, taxaYampi, taxaImposto, lucro],
-                    backgroundColor: [
-                        '#0d838c',
-                        '#333333',
-                        '#555555',
-                        '#777777',
-                        '#4cc9f0'
-                    ],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'right',
-                        labels: {
-                            color: getComputedStyle(document.documentElement).getPropertyValue('--text')
-                        }
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: function(context) {
-                                const label = context.label || '';
-                                const value = context.raw;
-                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                const percentage = ((value / total) * 100).toFixed(2) + '%';
-                                return `${label}: ${formatarMoeda(value, 'BRL')} (${percentage})`;
-                            }
-                        }
-                    }
+            
+            // Calcular custo em reais
+            const custoReais = custoDolar * cotacaoDolar;
+            
+            // Calcular preço com margem de lucro
+            const precoComMargem = custoReais * (1 + margemLucro / 100);
+            
+            // Obter taxas personalizadas
+            const config = JSON.parse(localStorage.getItem('calculadoraConfig')) || {
+                taxas: {
+                    parcelamento: 14.35,
+                    pix: 0.79,
+                    yampi: 2.5,
+                    imposto: 10
                 }
+            };
+            
+            // Selecionar a taxa de pagamento correta com base no método
+            let taxaPagamento, nomeTaxaPagamento;
+            if (metodoPagamento === 'pix') {
+                taxaPagamento = config.taxas.pix / 100;
+                nomeTaxaPagamento = `Taxa Pix (${config.taxas.pix}%)`;
+            } else {
+                taxaPagamento = config.taxas.parcelamento / 100;
+                nomeTaxaPagamento = `Parcelamento sem juros (${config.taxas.parcelamento}%)`;
             }
-        });
+            
+            const taxaYampi = config.taxas.yampi / 100;
+            const taxaImposto = config.taxas.imposto / 100;
+            
+            // Fator para ajustar o preço considerando todas as taxas
+            const totalTaxas = taxaPagamento + taxaYampi + taxaImposto;
+            const precoFinal = precoComMargem / (1 - totalTaxas);
+            
+            // Calcular valores individuais das taxas
+            const valorTaxaPagamento = precoFinal * taxaPagamento;
+            const valorYampi = precoFinal * taxaYampi;
+            const valorImposto = precoFinal * taxaImposto;
+            
+            // Calcular custo do produto com as taxas
+            const custoProdutoComTaxas = custoReais / (1 - totalTaxas);
+            
+            // Calcular valor do lucro e percentual
+            const lucroReal = precoFinal - custoProdutoComTaxas;
+            const percentualLucroReal = (lucroReal / custoProdutoComTaxas) * 100;
+            
+            // Calcular valores totais para múltiplas unidades
+            const custoTotalReais = custoReais * quantidade;
+            const precoTotalFinal = precoFinal * quantidade;
+            const lucroTotalReal = lucroReal * quantidade;
+            
+            // Exibir resultado
+            const resultadoDiv = document.getElementById('resultado');
+            const resultadoDetalhes = document.getElementById('resultadoDetalhes');
+            
+            resultadoDetalhes.innerHTML = `
+                <p><strong>Nome do Produto:</strong> ${nomeProduto}</p>
+                <p><strong>Data da Cotação:</strong> ${formatarData(dataCotacao)}</p>
+                <p><strong>Custo em Dólar:</strong> ${formatarMoeda(custoDolar, 'USD')}</p>
+                <p><strong>Cotação do Dólar:</strong> ${formatarMoeda(cotacaoDolar, 'BRL')}</p>
+                <p><strong>Custo em Reais:</strong> ${formatarMoeda(custoReais, 'BRL')}</p>
+                <p><strong>Margem de Lucro Desejada:</strong> ${margemLucro}%</p>
+                <p><strong>Preço com Margem:</strong> ${formatarMoeda(precoComMargem, 'BRL')}</p>
+                <hr>
+                <p><strong>Taxas Aplicadas:</strong></p>
+                <ul>
+                    <li><span>${nomeTaxaPagamento}:</span> <span>${formatarMoeda(valorTaxaPagamento, 'BRL')}</span></li>
+                    <li><span>Yampi (${config.taxas.yampi}%):</span> <span>${formatarMoeda(valorYampi, 'BRL')}</span></li>
+                    <li><span>Imposto (${config.taxas.imposto}%):</span> <span>${formatarMoeda(valorImposto, 'BRL')}</span></li>
+                </ul>
+                <hr>
+                <p><strong>Custo do Produto com Taxas:</strong> ${formatarMoeda(custoProdutoComTaxas, 'BRL')}</p>
+                <p><strong>Valor do Lucro em Reais:</strong> ${formatarMoeda(lucroReal, 'BRL')}</p>
+                <p><strong>Percentual de Lucro Real:</strong> ${percentualLucroReal.toFixed(2)}%</p>
+                <hr>
+                <p><strong>Preço Final Unitário:</strong> ${formatarMoeda(precoFinal, 'BRL')}</p>
+                <hr>
+                <p><strong>Quantidade:</strong> ${quantidade} unidades</p>
+                <p><strong>Custo Total:</strong> ${formatarMoeda(custoTotalReais, 'BRL')}</p>
+                <p><strong>Lucro Total:</strong> ${formatarMoeda(lucroTotalReal, 'BRL')}</p>
+                <p><strong>Preço Final Total:</strong> ${formatarMoeda(precoTotalFinal, 'BRL')}</p>
+            `;
+            
+            resultadoDiv.style.display = 'block';
+            
+            // Armazenar dados do cálculo atual para salvar
+            window.calculoAtual = {
+                id: Date.now(),
+                nomeProduto,
+                dataCotacao,
+                custoDolar,
+                cotacaoDolar,
+                margemLucro,
+                custoReais,
+                precoComMargem,
+                valorTaxaPagamento,
+                valorYampi,
+                valorImposto,
+                precoFinal,
+                custoProdutoComTaxas,
+                lucroReal,
+                percentualLucroReal,
+                quantidade,
+                metodoPagamento,
+                precoTotalFinal,
+                dataCriacao: new Date().toISOString()
+            };
+            
+            // Recria botão de salvar para garantir um evento limpo
+            const salvarBtnContainer = document.createElement('div');
+            salvarBtnContainer.innerHTML = '<button id="salvarBtn"><i class="fas fa-save"></i> Salvar Orçamento</button>';
+            
+            // Adicionar ao resultado
+            resultadoDetalhes.appendChild(salvarBtnContainer);
+            
+            // Adicionar evento ao novo botão
+            document.getElementById('salvarBtn').addEventListener('click', function() {
+                salvarItem(window.calculoAtual);
+            });
+        } catch (erro) {
+            console.error("Erro ao calcular preço:", erro);
+            mostrarNotificacao('Ocorreu um erro ao calcular. Tente novamente.', 'error');
+        }
     }
     
     // Salvar item
     function salvarItem(item) {
-        // Obter itens salvos do localStorage
-        let itensSalvos = JSON.parse(localStorage.getItem('calculadoraLucro')) || [];
-        
-        // Adicionar novo item
-        itensSalvos.push(item);
-        
-        // Salvar no localStorage
-        localStorage.setItem('calculadoraLucro', JSON.stringify(itensSalvos));
-        
-        // Atualizar dashboard
-        atualizarDashboard();
-        
-        // Recarregar lista de itens
-        carregarItensSalvos();
-        
-        // Limpar formulário
-        document.getElementById('nomeProduto').value = '';
-        document.getElementById('custoDolar').value = '';
-        document.getElementById('margemLucro').value = '';
-        document.getElementById('quantidade').value = '1';
-        document.getElementById('observacoes').value = '';
-        
-        // Ocultar resultado
-        document.getElementById('resultado').style.display = 'none';
-        
-        mostrarNotificacao('Orçamento salvo com sucesso!');
-        
-        // Se o usuário estiver logado e o Firebase estiver configurado, salvar na nuvem
-        if (usuarioAtual && firebase.apps.length > 0) {
-            salvarItemNaNuvem(item, usuarioAtual.uid);
-        }
-    }
-    
-    // Salvar item na nuvem (Firebase)
-    async function salvarItemNaNuvem(item, userId) {
         try {
-            // Adicionar identificador de usuário ao item
-            item.userId = userId;
+            console.log("Salvando item:", item);
             
-            // Referência ao Firestore
-            const db = firebase.firestore();
+            // Obter itens salvos do localStorage
+            let itensSalvos = JSON.parse(localStorage.getItem('calculadoraLucro')) || [];
             
-            // Adicionar ao Firestore
-            await db.collection('orcamentos').add(item);
+            // Adicionar novo item
+            itensSalvos.push(item);
             
-            console.log('Item salvo na nuvem com sucesso!');
-        } catch (error) {
-            console.error('Erro ao salvar item na nuvem:', error);
-            mostrarNotificacao('Orçamento salvo localmente, mas ocorreu um erro ao salvar na nuvem.', 'error');
+            // Salvar no localStorage
+            localStorage.setItem('calculadoraLucro', JSON.stringify(itensSalvos));
+            
+            // Recarregar lista de itens
+            carregarItensSalvos();
+            
+            // Limpar formulário
+            document.getElementById('nomeProduto').value = '';
+            document.getElementById('custoDolar').value = '';
+            document.getElementById('margemLucro').value = '';
+            document.getElementById('quantidade').value = '1';
+            
+            // Ocultar resultado
+            document.getElementById('resultado').style.display = 'none';
+            
+            mostrarNotificacao('Orçamento salvo com sucesso!');
+        } catch (erro) {
+            console.error("Erro ao salvar item:", erro);
+            mostrarNotificacao('Erro ao salvar. Tente novamente.', 'error');
         }
     }
     
-    // Carregar itens salvos
+    // Carregar itens salvos - Versão simplificada para diagnóstico
     function carregarItensSalvos(viewType) {
-        const itensSalvosDiv = document.getElementById('itensSalvos');
-        let itensSalvos = JSON.parse(localStorage.getItem('calculadoraLucro')) || [];
-        
-        // Carregar configuração
-        const config = JSON.parse(localStorage.getItem('calculadoraConfig')) || {
-            visualizacao: 'card'
-        };
-        
-        // Usar visualização salva ou a que foi passada
-        const visualizacao = viewType || config.visualizacao;
-        
-        // Salvar preferência de visualização
-        if (viewType) {
-            config.visualizacao = viewType;
-            localStorage.setItem('calculadoraConfig', JSON.stringify(config));
-        }
-        
-        if (itensSalvos.length === 0) {
-            itensSalvosDiv.innerHTML = '<p>Nenhum orçamento salvo ainda.</p>';
-            return;
-        }
-        
-        // Ordenar itens do mais recente para o mais antigo
-        itensSalvos.sort((a, b) => b.id - a.id);
-        
-        // Verificar se há filtro ativo
-        const filtro = document.getElementById('filtroOrcamentos').value.trim().toLowerCase();
-        if (filtro) {
-            itensSalvos = itensSalvos.filter(item => 
-                item.nomeProduto.toLowerCase().includes(filtro) || 
-                formatarMoeda(item.precoFinal, 'BRL').includes(filtro) ||
-                (item.margemLucro + '%').includes(filtro) ||
-                (item.clienteNome && item.clienteNome.toLowerCase().includes(filtro))
-            );
-        }
-        
-        // Exibir itens conforme o tipo de visualização
-        if (visualizacao === 'table') {
-            exibirItensTabelaHTML(itensSalvos, itensSalvosDiv);
-        } else {
-            exibirItensCardHTML(itensSalvos, itensSalvosDiv);
-        }
-        
-        // Adicionar eventos aos botões
-        document.querySelectorAll('.edit-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                editarItem(this.getAttribute('data-id'));
-            });
-        });
-        
-        document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                excluirItem(this.getAttribute('data-id'));
-            });
-        });
-        
-        document.querySelectorAll('.share-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const itemId = this.getAttribute('data-id');
-                const item = itensSalvos.find(item => item.id == itemId);
-                if (item) {
-                    abrirModalCompartilhar(item);
-                }
-            });
-        });
-    }
-    
-    // Exibir itens em formato de cards
-    function exibirItensCardHTML(itensSalvos, itensSalvosDiv) {
-        itensSalvosDiv.innerHTML = '';
-        
-        itensSalvos.forEach(item => {
-            const quantidade = item.quantidade || 1;
-            const metodoPagamento = item.metodoPagamento === 'pix' ? 'Pix' : 'Cartão de Crédito';
-            
-            const itemDiv = document.createElement('div');
-            itemDiv.className = 'item';
-            itemDiv.innerHTML = `
-                <h4>${item.nomeProduto}</h4>
-                <div class="item-details">
-                    <p><strong>Data:</strong> ${formatarData(item.dataCotacao)}</p>
-                    <p><strong>Custo em Dólar:</strong> ${formatarMoeda(item.custoDolar, 'USD')} (Cotação ${formatarMoeda(item.cotacaoDolar, 'BRL')})</p>
-                    <p><strong>Margem de Lucro Desejada:</strong> ${item.margemLucro}%</p>
-                    <p><strong>Método de Pagamento:</strong> ${metodoPagamento}</p>
-                    <p><strong>Preço Unitário:</strong> ${formatarMoeda(item.precoFinal, 'BRL')}</p>
-                    <p><strong>Quantidade:</strong> ${quantidade} unidades</p>
-                    <p><strong>Preço Total:</strong> ${formatarMoeda(item.precoFinal * quantidade, 'BRL')}</p>
-                    <p><strong>Lucro Real:</strong> ${formatarMoeda(item.lucroReal || 0, 'BRL')} (${(item.percentualLucroReal || 0).toFixed(2)}%)</p>
-                    ${item.clienteNome ? `<p><strong>Cliente:</strong> ${item.clienteNome}</p>` : ''}
-                    ${item.observacoes ? `<p><strong>Observações:</strong> ${item.observacoes}</p>` : ''}
-                </div>
-                <div class="item-actions">
-                    <button class="edit-btn" data-id="${item.id}"><i class="fas fa-edit"></i> Editar</button>
-                    <button class="share-btn" data-id="${item.id}" style="background-color: #4895ef;"><i class="fas fa-share-alt"></i> Compartilhar</button>
-                    <button class="delete-btn" data-id="${item.id}"><i class="fas fa-trash"></i> Excluir</button>
-                </div>
-            `;
-            itensSalvosDiv.appendChild(itemDiv);
-        });
-    }
-    
-    // Exibir itens em formato de tabela
-    function exibirItensTabelaHTML(itensSalvos, itensSalvosDiv) {
-        let html = `
-            <table class="table-view">
-                <thead>
-                    <tr>
-                        <th>Produto</th>
-                        <th>Data</th>
-                        <th>Custo</th>
-                        <th>Preço Final</th>
-                        <th>Lucro</th>
-                        <th>Qtd</th>
-                        <th>Pagamento</th>
-                        <th>Cliente</th>
-                        <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-        `;
-        
-        itensSalvos.forEach(item => {
-            const quantidade = item.quantidade || 1;
-            const metodoPagamento = item.metodoPagamento === 'pix' ? 'Pix' : 'Cartão';
-            
-            html += `
-                <tr>
-                    <td>${item.nomeProduto}</td>
-                    <td>${formatarData(item.dataCotacao)}</td>
-                    <td>${formatarMoeda(item.custoReais, 'BRL')}</td>
-                    <td>${formatarMoeda(item.precoFinal, 'BRL')}</td>
-                    <td>${formatarMoeda(item.lucroReal || 0, 'BRL')} (${(item.percentualLucroReal || 0).toFixed(2)}%)</td>
-                    <td>${quantidade}</td>
-                    <td>${metodoPagamento}</td>
-                    <td>${item.clienteNome || '-'}</td>
-                    <td>
-                        <button class="btn-small edit-btn" data-id="${item.id}"><i class="fas fa-edit"></i></button>
-                        <button class="btn-small share-btn" data-id="${item.id}" style="background-color: #4895ef;"><i class="fas fa-share-alt"></i></button>
-                        <button class="btn-small delete-btn" data-id="${item.id}"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>
-            `;
-        });
-        
-        html += `
-                </tbody>
-            </table>
-        `;
-        
-        itensSalvosDiv.innerHTML = html;
-    }
-    
-    // Editar item
-    function editarItem(id) {
-        // Obter itens salvos
-        const itensSalvos = JSON.parse(localStorage.getItem('calculadoraLucro')) || [];
-        
-        // Encontrar item pelo id
-        const item = itensSalvos.find(item => item.id == id);
-        
-        if (!item) {
-            mostrarNotificacao('Item não encontrado!', 'error');
-            return;
-        }
-        
-        // Mudar para a aba da calculadora
-        document.querySelector('.tab-button[data-tab="calculator"]').click();
-        
-        // Preencher formulário com dados do item
-        document.getElementById('nomeProduto').value = item.nomeProduto;
-        document.getElementById('dataCotacao').value = item.dataCotacao;
-        document.getElementById('custoDolar').value = item.custoDolar;
-        document.getElementById('cotacaoDolar').value = item.cotacaoDolar;
-        document.getElementById('margemLucro').value = item.margemLucro;
-        document.getElementById('quantidade').value = item.quantidade || 1;
-        document.getElementById('observacoes').value = item.observacoes || '';
-        
-        if (item.metodoPagamento) {
-            document.getElementById('metodoPagamento').value = item.metodoPagamento;
-            toggleTaxaDisplay(); // Atualizar exibição de taxas
-        }
-        
-        if (item.clienteId) {
-            document.getElementById('clienteSelect').value = item.clienteId;
-        }
-        
-        // Rolar para o formulário
-        document.querySelector('.card').scrollIntoView({ behavior: 'smooth' });
-        
-        // Calcular preço para mostrar resultado
-        calcularPreco();
-        
-        // Pegar o botão de salvar que foi criado ao calcular o preço
-        const salvarBtn = document.getElementById('salvarBtn');
-        
-        // Atualizar texto e evento do botão
-        salvarBtn.innerHTML = '<i class="fas fa-save"></i> Salvar Edição';
-        
-        // Remover eventos anteriores (clonar e substituir o botão)
-        const novoSalvarBtn = salvarBtn.cloneNode(true);
-        salvarBtn.parentNode.replaceChild(novoSalvarBtn, salvarBtn);
-        
-        // Adicionar novo evento
-        novoSalvarBtn.addEventListener('click', function() {
-            // Remover item antigo
-            excluirItem(id, false);
-            
-            // Salvar como novo item
-            salvarItem(window.calculoAtual);
-            
-            mostrarNotificacao('Orçamento atualizado com sucesso!');
-        });
-    }
-    
-    // Excluir item
-    function excluirItem(id, confirmar = true) {
-        if (confirmar && !confirm('Tem certeza que deseja excluir este orçamento?')) {
-            return;
-        }
-        
-        // Obter itens salvos
-        let itensSalvos = JSON.parse(localStorage.getItem('calculadoraLucro')) || [];
-        
-        // Obter item antes de excluir (para sincronização com a nuvem)
-        const item = itensSalvos.find(item => item.id == id);
-        
-        // Filtrar item a ser excluído
-        itensSalvos = itensSalvos.filter(item => item.id != id);
-        
-        // Salvar no localStorage
-        localStorage.setItem('calculadoraLucro', JSON.stringify(itensSalvos));
-        
-        // Atualizar dashboard
-        atualizarDashboard();
-        
-        // Recarregar lista de itens
-        carregarItensSalvos();
-        
-        if (confirmar) {
-            mostrarNotificacao('Orçamento excluído com sucesso!');
-        }
-        
-        // Se o usuário estiver logado e o Firebase estiver configurado, excluir na nuvem
-        if (usuarioAtual && firebase.apps.length > 0 && item && item.firebaseId) {
-            excluirItemNaNuvem(item.firebaseId);
-        }
-    }
-    
-    // Excluir item na nuvem (Firebase)
-    async function excluirItemNaNuvem(firebaseId) {
+        console.log("Carregando itens salvos...");
         try {
-            // Referência ao Firestore
-            const db = firebase.firestore();
+            const itensSalvosDiv = document.getElementById('itensSalvos');
+            let itensSalvos = JSON.parse(localStorage.getItem('calculadoraLucro')) || [];
             
-            // Excluir do Firestore
-            await db.collection('orcamentos').doc(firebaseId).delete();
+            if (itensSalvos.length === 0) {
+                itensSalvosDiv.innerHTML = '<p>Nenhum orçamento salvo ainda.</p>';
+                return;
+            }
             
-            console.log('Item excluído da nuvem com sucesso!');
-        } catch (error) {
-            console.error('Erro ao excluir item da nuvem:', error);
+            // Ordenar itens do mais recente para o mais antigo
+            itensSalvos.sort((a, b) => b.id - a.id);
+            
+            // Exibir itens em cards para diagnóstico
+            let html = '';
+            
+            itensSalvos.forEach(item => {
+                html += `
+                    <div class="item">
+                        <h4>${item.nomeProduto || 'Sem nome'}</h4>
+                        <div class="item-details">
+                            <p><strong>Data:</strong> ${formatarData(item.dataCotacao)}</p>
+                            <p><strong>Preço Final:</strong> ${formatarMoeda(item.precoFinal || 0, 'BRL')}</p>
+                        </div>
+                        <div class="item-actions">
+                            <button class="edit-btn" data-id="${item.id}"><i class="fas fa-edit"></i> Editar</button>
+                            <button class="delete-btn" data-id="${item.id}"><i class="fas fa-trash"></i> Excluir</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            itensSalvosDiv.innerHTML = html;
+            
+            // Adicionar eventos aos botões
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.onclick = function() {
+                    console.log("Botão de editar clicado:", this.getAttribute('data-id'));
+                    // A função de editar será implementada depois
+                };
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.onclick = function() {
+                    if (confirm('Tem certeza que deseja excluir este orçamento?')) {
+                        const id = this.getAttribute('data-id');
+                        let itens = JSON.parse(localStorage.getItem('calculadoraLucro')) || [];
+                        itens = itens.filter(item => item.id != id);
+                        localStorage.setItem('calculadoraLucro', JSON.stringify(itens));
+                        carregarItensSalvos();
+                        mostrarNotificacao('Orçamento excluído com sucesso!');
+                    }
+                };
+            });
+        } catch (erro) {
+            console.error("Erro ao carregar itens:", erro);
+            itensSalvosDiv.innerHTML = '<p>Erro ao carregar orçamentos.</p>';
         }
+    }
+    
+    // Auxiliares
+    
+    // Formatar data
+    function formatarData(dataString) {
+        try {
+            const data = new Date(dataString);
+            return data.toLocaleDateString('pt-BR');
+        } catch (erro) {
+            return "Data inválida";
+        }
+    }
+    
+    // Formatar moeda
+    function formatarMoeda(valor, moeda = 'BRL') {
+        try {
+            return new Intl.NumberFormat('pt-BR', { 
+                style: 'currency', 
+                currency: moeda 
+            }).format(valor);
+        } catch (erro) {
+            return valor + " " + moeda;
+        }
+    }
+    
+    // Mostrar notificação
+    function mostrarNotificacao(mensagem, tipo = 'success') {
+        const notificacao = document.getElementById('notification');
+        notificacao.textContent = mensagem;
+        notificacao.style.backgroundColor = tipo === 'error' ? '#e63946' : '#0d838c';
+        notificacao.classList.add('show');
+        
+        setTimeout(() => {
+            notificacao.classList.remove('show');
+        }, 3000);
+    }
+    
+    // Definir botão de visualização ativo
+    function setActiveViewButton(buttonId) {
+        document.getElementById('cardViewBtn').classList.remove('active');
+        document.getElementById('tableViewBtn').classList.remove('active');
+        document.getElementById(buttonId).classList.add('active');
     }
     
     // Filtrar orçamentos
     function filtrarOrcamentos() {
+        console.log("Filtrando orçamentos...");
         carregarItensSalvos();
     }
     
     // Exportar para CSV
-   // CONTINUAÇÃO DAS FUNÇÕES (adicione ao final do script anterior)
-
-// Exportar para Excel
-function exportarExcel() {
-    const itensSalvos = JSON.parse(localStorage.getItem('calculadoraLucro')) || [];
-    
-    if (itensSalvos.length === 0) {
-        mostrarNotificacao('Não há orçamentos para exportar.', 'error');
-        return;
+    function exportarCSV() {
+        console.log("Exportando para CSV...");
+        mostrarNotificacao('Função em desenvolvimento');
     }
     
-    // Formatar dados para CSV (usado para Excel)
-    let csv = 'Nome do Produto,Data da Cotação,Custo em Dólar,Cotação do Dólar,Custo em Reais,Margem de Lucro,Preço Final,Quantidade,Método de Pagamento,Lucro Real,Percentual de Lucro,Cliente,Observações\n';
-    
-    itensSalvos.forEach(item => {
-        const metodoPagamento = item.metodoPagamento === 'pix' ? 'Pix' : 'Cartão';
-        const quantidade = item.quantidade || 1;
-        
-        csv += `"${item.nomeProduto.replace(/"/g, '""')}",`;
-        csv += `"${formatarData(item.dataCotacao)}",`;
-        csv += `"${item.custoDolar}",`;
-        csv += `"${item.cotacaoDolar}",`;
-        csv += `"${item.custoReais.toFixed(2)}",`;
-        csv += `"${item.margemLucro}%",`;
-        csv += `"${item.precoFinal.toFixed(2)}",`;
-        csv += `"${quantidade}",`;
-        csv += `"${metodoPagamento}",`;
-        csv += `"${(item.lucroReal || 0).toFixed(2)}",`;
-        csv += `"${(item.percentualLucroReal || 0).toFixed(2)}%",`;
-        csv += `"${(item.clienteNome || '').replace(/"/g, '""')}",`;
-        csv += `"${(item.observacoes || '').replace(/"/g, '""')}"\n`;
-    });
-    
-    // Criar arquivo para download
-    const blob = new Blob([csv], { type: 'application/vnd.ms-excel;charset=utf-8;' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.setAttribute('href', url);
-    link.setAttribute('download', 'orcamentos_led_line_br_parts.xls');
-    link.style.visibility = 'hidden';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-    
-    mostrarNotificacao('Arquivo Excel exportado com sucesso!');
-}
-
-// Limpar todos os dados
-function limparDados() {
-    if (confirm('Tem certeza que deseja excluir TODOS os orçamentos salvos? Esta ação não pode ser desfeita.')) {
-        localStorage.removeItem('calculadoraLucro');
-        carregarItensSalvos();
-        mostrarNotificacao('Todos os orçamentos foram excluídos!');
-    }
-}
-
-// Definir botão de visualização ativo
-function setActiveViewButton(buttonId) {
-    document.getElementById('cardViewBtn').classList.remove('active');
-    document.getElementById('tableViewBtn').classList.remove('active');
-    document.getElementById(buttonId).classList.add('active');
-}
-
-// Abrir modal de compartilhamento
-function abrirModalCompartilhar(item) {
-    const modal = document.getElementById('shareModal');
-    const shareContent = document.getElementById('shareContent');
-    
-    const cliente = item.clienteNome ? `<p><strong>Cliente:</strong> ${item.clienteNome}</p>` : '';
-    const observacoes = item.observacoes ? `<p><strong>Observações:</strong> ${item.observacoes}</p>` : '';
-    
-    // Preencher conteúdo do modal
-    shareContent.innerHTML = `
-        <div style="margin-bottom: 20px;">
-            <h4 style="margin-bottom: 10px;">${item.nomeProduto}</h4>
-            <p><strong>Preço Unitário:</strong> ${formatarMoeda(item.precoFinal, 'BRL')}</p>
-            <p><strong>Quantidade:</strong> ${item.quantidade || 1} unidades</p>
-            <p><strong>Preço Total:</strong> ${formatarMoeda(item.precoFinal * (item.quantidade || 1), 'BRL')}</p>
-            ${cliente}
-            ${observacoes}
-        </div>
-    `;
-    
-    // Armazenar o item atual para compartilhamento
-    window.itemParaCompartilhar = item;
-    
-    // Exibir modal
-    modal.style.display = 'block';
-}
-
-// Compartilhar via WhatsApp
-function compartilharWhatsApp() {
-    const item = window.itemParaCompartilhar;
-    
-    if (!item) return;
-    
-    const texto = `*Orçamento: ${item.nomeProduto}*
-    
-Preço Unitário: ${formatarMoeda(item.precoFinal, 'BRL')}
-Quantidade: ${item.quantidade || 1} unidades
-Preço Total: ${formatarMoeda(item.precoFinal * (item.quantidade || 1), 'BRL')}
-
-${item.observacoes ? 'Observações: ' + item.observacoes : ''}
-
-Orçamento gerado por LED LINE BR PARTS`;
-
-    // Criar URL para WhatsApp
-    const url = `https://wa.me/?text=${encodeURIComponent(texto)}`;
-    
-    // Abrir em nova aba
-    window.open(url, '_blank');
-    
-    // Fechar modal
-    document.getElementById('shareModal').style.display = 'none';
-}
-
-// Compartilhar via Email
-function compartilharEmail() {
-    const item = window.itemParaCompartilhar;
-    
-    if (!item) return;
-    
-    const assunto = `Orçamento: ${item.nomeProduto}`;
-    
-    const corpo = `Orçamento: ${item.nomeProduto}
-    
-Preço Unitário: ${formatarMoeda(item.precoFinal, 'BRL')}
-Quantidade: ${item.quantidade || 1} unidades
-Preço Total: ${formatarMoeda(item.precoFinal * (item.quantidade || 1), 'BRL')}
-
-${item.observacoes ? 'Observações: ' + item.observacoes : ''}
-
-Orçamento gerado por LED LINE BR PARTS`;
-
-    // Criar URL para email
-    const url = `mailto:?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpo)}`;
-    
-    // Abrir cliente de email
-    window.location.href = url;
-    
-    // Fechar modal
-    document.getElementById('shareModal').style.display = 'none';
-}
-
-// Compartilhar como PDF
-function compartilharPDF() {
-    const item = window.itemParaCompartilhar;
-    
-    if (!item) return;
-    
-    // Preparar conteúdo para PDF
-    const content = document.createElement('div');
-    content.innerHTML = `
-        <div style="font-family: Arial, sans-serif; padding: 20px;">
-            <h1 style="color: #0d838c; text-align: center;">LED LINE BR PARTS</h1>
-            <h2 style="text-align: center;">Orçamento</h2>
-            
-            <div style="margin-top: 30px;">
-                <h3 style="color: #0d838c;">${item.nomeProduto}</h3>
-                <p><strong>Data:</strong> ${formatarData(item.dataCotacao)}</p>
-                ${item.clienteNome ? `<p><strong>Cliente:</strong> ${item.clienteNome}</p>` : ''}
-                
-                <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
-                    <tr style="background-color: #f2f2f2;">
-                        <th style="padding: 10px; border: 1px solid #ddd; text-align: left;">Item</th>
-                        <th style="padding: 10px; border: 1px solid #ddd; text-align: right;">Valor</th>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Custo em Dólar</td>
-                        <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">${formatarMoeda(item.custoDolar, 'USD')}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Cotação do Dólar</td>
-                        <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">${formatarMoeda(item.cotacaoDolar, 'BRL')}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Preço Unitário</td>
-                        <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">${formatarMoeda(item.precoFinal, 'BRL')}</td>
-                    </tr>
-                    <tr>
-                        <td style="padding: 10px; border: 1px solid #ddd;">Quantidade</td>
-                        <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">${item.quantidade || 1} unidades</td>
-                    </tr>
-                    <tr style="font-weight: bold; background-color: #f2f2f2;">
-                        <td style="padding: 10px; border: 1px solid #ddd;">Preço Total</td>
-                        <td style="padding: 10px; border: 1px solid #ddd; text-align: right;">${formatarMoeda(item.precoFinal * (item.quantidade || 1), 'BRL')}</td>
-                    </tr>
-                </table>
-                
-                ${item.observacoes ? `<p><strong>Observações:</strong> ${item.observacoes}</p>` : ''}
-                
-                <div style="margin-top: 30px; font-size: 12px; color: #666; text-align: center;">
-                    <p>Orçamento gerado em ${formatarData(new Date().toISOString())}</p>
-                    <p>LED LINE BR PARTS</p>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    // Colocar elemento na página temporariamente
-    document.body.appendChild(content);
-    
-    // Usar html2canvas e jsPDF para gerar PDF
-    html2canvas(content).then(canvas => {
-        const imgData = canvas.toDataURL('image/png');
-        const pdf = new jspdf.jsPDF();
-        const imgProps = pdf.getImageProperties(imgData);
-        const pdfWidth = pdf.internal.pageSize.getWidth();
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-        
-        pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-        pdf.save(`orcamento_${item.nomeProduto.replace(/\s+/g, '_')}.pdf`);
-        
-        // Remover elemento temporário
-        document.body.removeChild(content);
-        
-        // Fechar modal
-        document.getElementById('shareModal').style.display = 'none';
-    });
-}
-
-// Compartilhar como link
-function compartilharLink() {
-    const item = window.itemParaCompartilhar;
-    
-    if (!item) return;
-    
-    // Criar objeto com dados essenciais para compartilhamento
-    const dadosCompartilhados = {
-        nomeProduto: item.nomeProduto,
-        precoFinal: item.precoFinal,
-        quantidade: item.quantidade || 1,
-        observacoes: item.observacoes || '',
-        dataGeracao: new Date().toISOString()
-    };
-    
-    // Converter para base64
-    const dadosBase64 = btoa(JSON.stringify(dadosCompartilhados));
-    
-    // Criar URL com parâmetro de dados
-    const url = `${window.location.href.split('?')[0]}?share=${dadosBase64}`;
-    
-    // Copiar para área de transferência
-    navigator.clipboard.writeText(url)
-        .then(() => {
-            mostrarNotificacao('Link copiado para a área de transferência!');
-            
-            // Fechar modal
-            document.getElementById('shareModal').style.display = 'none';
-        })
-        .catch(err => {
-            console.error('Erro ao copiar link:', err);
-            mostrarNotificacao('Erro ao copiar link. Tente novamente.', 'error');
-        });
-}
-
-// Carregar dados compartilhados via URL
-function carregarDadosCompartilhados() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const dadosCompartilhados = urlParams.get('share');
-    
-    if (dadosCompartilhados) {
-        try {
-            // Decodificar dados
-            const dados = JSON.parse(atob(dadosCompartilhados));
-            
-            // Exibir notificação
-            mostrarNotificacao('Orçamento compartilhado carregado!');
-            
-            // Exibir dados em um modal ou na interface
-            alert(`Orçamento compartilhado: ${dados.nomeProduto}\nPreço: ${formatarMoeda(dados.precoFinal, 'BRL')}\nQuantidade: ${dados.quantidade} unidades\nTotal: ${formatarMoeda(dados.precoFinal * dados.quantidade, 'BRL')}\n\n${dados.observacoes ? 'Observações: ' + dados.observacoes : ''}`);
-        } catch (error) {
-            console.error('Erro ao carregar dados compartilhados:', error);
-        }
-    }
-}
-
-// Abrir modal de cliente
-function abrirModalCliente() {
-    // Limpar formulário
-    document.getElementById('clientName').value = '';
-    document.getElementById('clientEmail').value = '';
-    document.getElementById('clientPhone').value = '';
-    document.getElementById('clientNotes').value = '';
-    
-    // Exibir modal
-    document.getElementById('clientModal').style.display = 'block';
-}
-
-// Salvar cliente
-function salvarCliente() {
-    const nome = document.getElementById('clientName').value;
-    const email = document.getElementById('clientEmail').value;
-    const telefone = document.getElementById('clientPhone').value;
-    const observacoes = document.getElementById('clientNotes').value;
-    
-    // Validar nome
-    if (!nome) {
-        mostrarNotificacao('Por favor, informe o nome do cliente.', 'error');
-        return;
+    // Exportar para Excel
+    function exportarExcel() {
+        console.log("Exportando para Excel...");
+        mostrarNotificacao('Função em desenvolvimento');
     }
     
-    // Criar objeto do cliente
-    const cliente = {
-        id: Date.now(),
-        nome,
-        email,
-        telefone,
-        observacoes,
-        dataCadastro: new Date().toISOString()
-    };
-    
-    // Carregar clientes salvos
-    let clientes = JSON.parse(localStorage.getItem('calculadoraClientes')) || [];
-    
-    // Adicionar novo cliente
-    clientes.push(cliente);
-    
-    // Salvar no localStorage
-    localStorage.setItem('calculadoraClientes', JSON.stringify(clientes));
-    
-    // Fechar modal
-    document.getElementById('clientModal').style.display = 'none';
-    
-    // Recarregar lista de clientes
-    carregarClientes();
-    
-    // Atualizar select de clientes
-    atualizarSelectClientes();
-    
-    mostrarNotificacao('Cliente salvo com sucesso!');
-}
-
-// Carregar clientes
-function carregarClientes() {
-    const clientes = JSON.parse(localStorage.getItem('calculadoraClientes')) || [];
-    clientesData = clientes;
-    
-    // Exibir clientes na aba de clientes
-    exibirListaClientes(clientes);
-    
-    // Atualizar select de clientes
-    atualizarSelectClientes();
-}
-
-// Exibir lista de clientes
-function exibirListaClientes(clientes) {
-    const clientList = document.getElementById('clientList');
-    
-    if (clientes.length === 0) {
-        clientList.innerHTML = '<p>Nenhum cliente cadastrado ainda.</p>';
-        return;
-    }
-    
-    let html = '';
-    
-    clientes.forEach(cliente => {
-        html += `
-            <div class="client-item">
-                <div>
-                    <h4 style="margin: 0; color: var(--primary);">${cliente.nome}</h4>
-                    <p style="margin: 5px 0 0 0; font-size: 0.9rem;">
-                        ${cliente.email ? `<span><i class="fas fa-envelope"></i> ${cliente.email}</span>` : ''}
-                        ${cliente.telefone ? `<span style="margin-left: 10px;"><i class="fas fa-phone"></i> ${cliente.telefone}</span>` : ''}
-                    </p>
-                </div>
-                <div>
-                    <button class="btn-small edit-client-btn" data-id="${cliente.id}" style="background-color: var(--warning);"><i class="fas fa-edit"></i></button>
-                    <button class="btn-small delete-client-btn" data-id="${cliente.id}" style="background-color: var(--danger);"><i class="fas fa-trash"></i></button>
-                </div>
-            </div>
-        `;
-    });
-    
-    clientList.innerHTML = html;
-    
-    // Adicionar eventos aos botões
-    document.querySelectorAll('.edit-client-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            editarCliente(this.getAttribute('data-id'));
-        });
-    });
-    
-    document.querySelectorAll('.delete-client-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            excluirCliente(this.getAttribute('data-id'));
-        });
-    });
-}
-
-// Filtrar clientes
-function filtrarClientes() {
-    const filtro = document.getElementById('filtroClientes').value.trim().toLowerCase();
-    let clientes = JSON.parse(localStorage.getItem('calculadoraClientes')) || [];
-    
-    if (filtro) {
-        clientes = clientes.filter(cliente => 
-            cliente.nome.toLowerCase().includes(filtro) || 
-            (cliente.email && cliente.email.toLowerCase().includes(filtro)) ||
-            (cliente.telefone && cliente.telefone.includes(filtro))
-        );
-    }
-    
-    exibirListaClientes(clientes);
-}
-
-// Atualizar select de clientes
-function atualizarSelectClientes() {
-    const select = document.getElementById('clienteSelect');
-    const clientes = JSON.parse(localStorage.getItem('calculadoraClientes')) || [];
-    
-    // Manter a opção vazia
-    let html = '<option value="">Selecione um cliente</option>';
-    
-    // Adicionar opções de clientes
-    clientes.forEach(cliente => {
-        html += `<option value="${cliente.id}">${cliente.nome}</option>`;
-    });
-    
-    select.innerHTML = html;
-}
-
-// Editar cliente
-function editarCliente(id) {
-    const clientes = JSON.parse(localStorage.getItem('calculadoraClientes')) || [];
-    const cliente = clientes.find(c => c.id == id);
-    
-    if (!cliente) {
-        mostrarNotificacao('Cliente não encontrado!', 'error');
-        return;
-    }
-    
-    // Preencher formulário
-    document.getElementById('clientName').value = cliente.nome;
-    document.getElementById('clientEmail').value = cliente.email || '';
-    document.getElementById('clientPhone').value = cliente.telefone || '';
-    document.getElementById('clientNotes').value = cliente.observacoes || '';
-    
-    // Exibir modal
-    document.getElementById('clientModal').style.display = 'block';
-    
-    // Alterar comportamento do botão salvar
-    const saveBtn = document.getElementById('saveClientBtn');
-    saveBtn.innerHTML = '<i class="fas fa-save"></i> Atualizar Cliente';
-    
-    // Remover eventos anteriores
-    const newSaveBtn = saveBtn.cloneNode(true);
-    saveBtn.parentNode.replaceChild(newSaveBtn, saveBtn);
-    
-    // Adicionar novo evento
-    newSaveBtn.addEventListener('click', function() {
-        // Obter dados atualizados
-        const nome = document.getElementById('clientName').value;
-        const email = document.getElementById('clientEmail').value;
-        const telefone = document.getElementById('clientPhone').value;
-        const observacoes = document.getElementById('clientNotes').value;
-        
-        // Validar nome
-        if (!nome) {
-            mostrarNotificacao('Por favor, informe o nome do cliente.', 'error');
-            return;
-        }
-        
-        // Atualizar cliente
-        const index = clientes.findIndex(c => c.id == id);
-        
-        if (index !== -1) {
-            clientes[index] = {
-                ...clientes[index],
-                nome,
-                email,
-                telefone,
-                observacoes,
-                dataAtualizacao: new Date().toISOString()
-            };
-            
-            // Salvar no localStorage
-            localStorage.setItem('calculadoraClientes', JSON.stringify(clientes));
-            
-            // Fechar modal
-            document.getElementById('clientModal').style.display = 'none';
-            
-            // Recarregar lista de clientes
-            carregarClientes();
-            
-            mostrarNotificacao('Cliente atualizado com sucesso!');
-        }
-    });
-}
-
-// Excluir cliente
-function excluirCliente(id) {
-    if (!confirm('Tem certeza que deseja excluir este cliente?')) {
-        return;
-    }
-    
-    let clientes = JSON.parse(localStorage.getItem('calculadoraClientes')) || [];
-    
-    // Filtrar cliente a ser excluído
-    clientes = clientes.filter(c => c.id != id);
-    
-    // Salvar no localStorage
-    localStorage.setItem('calculadoraClientes', JSON.stringify(clientes));
-    
-    // Recarregar lista de clientes
-    carregarClientes();
-    
-    mostrarNotificacao('Cliente excluído com sucesso!');
-}
-
-// Atualizar dashboard
-function atualizarDashboard() {
-    const itensSalvos = JSON.parse(localStorage.getItem('calculadoraLucro')) || [];
-    
-    // Contar total de orçamentos
-    document.getElementById('totalOrcamentos').textContent = itensSalvos.length;
-    
-    // Calcular valor total
-    const valorTotal = itensSalvos.reduce((total, item) => total + (item.precoFinal * (item.quantidade || 1)), 0);
-    document.getElementById('valorTotal').textContent = formatarMoeda(valorTotal, 'BRL');
-    
-    // Gráfico de métodos de pagamento
-    atualizarGraficoMetodosPagamento(itensSalvos);
-    
-    // Gráfico de orçamentos por mês
-    atualizarGraficoOrcamentosPorMes(itensSalvos);
-}
-
-// Atualizar gráfico de métodos de pagamento
-function atualizarGraficoMetodosPagamento(itensSalvos) {
-    const ctx = document.getElementById('paymentMethodChart').getContext('2d');
-    
-    // Contar métodos de pagamento
-    const cartao = itensSalvos.filter(item => item.metodoPagamento === 'cartao').length;
-    const pix = itensSalvos.filter(item => item.metodoPagamento === 'pix').length;
-    
-    // Destruir gráfico anterior se existir
-    if (paymentMethodChart) {
-        paymentMethodChart.destroy();
-    }
-    
-    // Criar novo gráfico
-    paymentMethodChart = new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: ['Cartão de Crédito', 'Pix'],
-            datasets: [{
-                data: [cartao, pix],
-                backgroundColor: ['#4cc9f0', '#0d838c']
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'right'
-                }
-            }
-        }
-    });
-}
-
-// Atualizar gráfico de orçamentos por mês
-function atualizarGraficoOrcamentosPorMes(itensSalvos) {
-    const ctx = document.getElementById('monthlyBudgetChart').getContext('2d');
-    
-    // Agrupar orçamentos por mês
-    const orcamentosPorMes = {};
-    
-    itensSalvos.forEach(item => {
-        // Usar data de criação ou cotação
-        const data = new Date(item.dataCriacao || item.dataCotacao);
-        const mesAno = `${data.getMonth() + 1}/${data.getFullYear()}`;
-        
-        if (!orcamentosPorMes[mesAno]) {
-            orcamentosPorMes[mesAno] = 0;
-        }
-        
-        orcamentosPorMes[mesAno]++;
-    });
-    
-    // Preparar dados para o gráfico
-    const meses = Object.keys(orcamentosPorMes).sort((a, b) => {
-        const [mesA, anoA] = a.split('/').map(Number);
-        const [mesB, anoB] = b.split('/').map(Number);
-        
-        if (anoA !== anoB) {
-            return anoA - anoB;
-        }
-        
-        return mesA - mesB;
-    });
-    
-    const quantidades = meses.map(mes => orcamentosPorMes[mes]);
-    
-    // Destruir gráfico anterior se existir
-    if (monthlyBudgetChart) {
-        monthlyBudgetChart.destroy();
-    }
-    
-    // Criar novo gráfico
-    monthlyBudgetChart = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: meses,
-            datasets: [{
-                label: 'Orçamentos',
-                data: quantidades,
-                backgroundColor: '#0d838c'
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    ticks: {
-                        precision: 0
-                    }
-                }
-            }
-        }
-    });
-}
-
-// Abrir modal de login
-function abrirModalLogin() {
-    document.getElementById('loginModal').style.display = 'block';
-}
-
-// Fazer login
-async function fazerLogin() {
-    // Se o Firebase não estiver configurado, mostrar mensagem
-    if (firebase.apps.length === 0) {
-        mostrarNotificacao('Funcionalidade em manutenção. Tente novamente mais tarde.', 'error');
-        return;
-    }
-    
-    const email = document.getElementById('loginEmail').value;
-    const senha = document.getElementById('loginPassword').value;
-    
-    // Validar campos
-    if (!email || !senha) {
-        mostrarNotificacao('Por favor, preencha todos os campos.', 'error');
-        return;
-    }
-    
-    try {
-        // Fazer login no Firebase
-        const resultado = await firebase.auth().signInWithEmailAndPassword(email, senha);
-        
-        // Armazenar usuário
-        usuarioAtual = resultado.user;
-        
-        // Fechar modal
-        document.getElementById('loginModal').style.display = 'none';
-        
-        // Atualizar status de login
-        atualizarStatusLogin();
-        
-        // Sincronizar dados
-        sincronizarDados();
-        
-        mostrarNotificacao('Login realizado com sucesso!');
-    } catch (error) {
-        console.error('Erro ao fazer login:', error);
-        mostrarNotificacao('Erro ao fazer login. Verifique suas credenciais.', 'error');
-    }
-}
-
-// Registrar usuário
-async function registrarUsuario() {
-    // Se o Firebase não estiver configurado, mostrar mensagem
-    if (firebase.apps.length === 0) {
-        mostrarNotificacao('Funcionalidade em manutenção. Tente novamente mais tarde.', 'error');
-        return;
-    }
-    
-    const email = document.getElementById('loginEmail').value;
-    const senha = document.getElementById('loginPassword').value;
-    
-    // Validar campos
-    if (!email || !senha) {
-        mostrarNotificacao('Por favor, preencha todos os campos.', 'error');
-        return;
-    }
-    
-    // Validar força da senha
-    if (senha.length < 6) {
-        mostrarNotificacao('A senha deve ter pelo menos 6 caracteres.', 'error');
-        return;
-    }
-    
-    try {
-        // Criar usuário no Firebase
-        const resultado = await firebase.auth().createUserWithEmailAndPassword(email, senha);
-        
-        // Armazenar usuário
-        usuarioAtual = resultado.user;
-        
-        // Fechar modal
-        document.getElementById('loginModal').style.display = 'none';
-        
-        // Atualizar status de login
-        atualizarStatusLogin();
-        
-        mostrarNotificacao('Conta criada com sucesso!');
-    } catch (error) {
-        console.error('Erro ao criar conta:', error);
-        mostrarNotificacao('Erro ao criar conta. Tente novamente.', 'error');
-    }
-}
-
-// Atualizar status de login
-function atualizarStatusLogin() {
-    const loginBtn = document.getElementById('loginStatusBtn');
-    const userInfo = document.getElementById('userInfo');
-    
-    if (usuarioAtual) {
-        loginBtn.style.display = 'none';
-        userInfo.style.display = 'block';
-        userInfo.innerHTML = `<span style="margin-right: 10px;">${usuarioAtual.email}</span><button id="logoutBtn" class="btn-small" style="background-color: #6c757d;"><i class="fas fa-sign-out-alt"></i></button>`;
-        
-        // Adicionar evento ao botão de logout
-        document.getElementById('logoutBtn').addEventListener('click', fazerLogout);
-    } else {
-        loginBtn.style.display = 'block';
-        userInfo.style.display = 'none';
-    }
-}
-
-// Fazer logout
-async function fazerLogout() {
-    // Se o Firebase não estiver configurado, resetar variável
-    if (firebase.apps.length === 0) {
-        usuarioAtual = null;
-        atualizarStatusLogin();
-        return;
-    }
-    
-    try {
-        // Fazer logout no Firebase
-        await firebase.auth().signOut();
-        
-        // Resetar variável
-        usuarioAtual = null;
-        
-        // Atualizar status de login
-        atualizarStatusLogin();
-        
-        mostrarNotificacao('Logout realizado com sucesso!');
-    } catch (error) {
-        console.error('Erro ao fazer logout:', error);
-    }
-}
-
-// Sincronizar dados com a nuvem
-async function sincronizarDados() {
-    if (!usuarioAtual || firebase.apps.length === 0) {
-        return;
-    }
-    
-    try {
-        // Referência ao Firestore
-        const db = firebase.firestore();
-        
-        // Obter orçamentos do usuário
-        const snapshot = await db.collection('orcamentos')
-            .where('userId', '==', usuarioAtual.uid)
-            .get();
-        
-        // Obter orçamentos locais
-        let orcamentosLocais = JSON.parse(localStorage.getItem('calculadoraLucro')) || [];
-        
-        // Mapear IDs dos orçamentos na nuvem
-        const idsNaNuvem = new Set();
-        const orcamentosNaNuvem = [];
-        
-        snapshot.forEach(doc => {
-            const orcamento = doc.data();
-            orcamento.firebaseId = doc.id;
-            idsNaNuvem.add(orcamento.id);
-            orcamentosNaNuvem.push(orcamento);
-        });
-        
-        // Identificar orçamentos que estão apenas localmente
-        const orcamentosApenaLocais = orcamentosLocais.filter(o => !idsNaNuvem.has(o.id));
-        
-        // Salvar orçamentos locais na nuvem
-        for (const orcamento of orcamentosApenaLocais) {
-            orcamento.userId = usuarioAtual.uid;
-            const docRef = await db.collection('orcamentos').add(orcamento);
-            orcamento.firebaseId = docRef.id;
-        }
-        
-        // Identificar IDs dos orçamentos locais
-        const idsLocais = new Set(orcamentosLocais.map(o => o.id));
-        
-        // Identificar orçamentos que estão apenas na nuvem
-        const orcamentosApenaNaNuvem = orcamentosNaNuvem.filter(o => !idsLocais.has(o.id));
-        
-        // Adicionar orçamentos da nuvem localmente
-        if (orcamentosApenaNaNuvem.length > 0) {
-            orcamentosLocais = [...orcamentosLocais, ...orcamentosApenaNaNuvem];
-            localStorage.setItem('calculadoraLucro', JSON.stringify(orcamentosLocais));
-            
-            // Recarregar lista
+    // Limpar todos os dados
+    function limparDados() {
+        if (confirm('Tem certeza que deseja excluir TODOS os orçamentos salvos? Esta ação não pode ser desfeita.')) {
+            localStorage.removeItem('calculadoraLucro');
             carregarItensSalvos();
-            
-            // Notificar usuário
-            mostrarNotificacao(`Sincronizado ${orcamentosApenaNaNuvem.length} orçamentos da nuvem.`);
+            mostrarNotificacao('Todos os orçamentos foram excluídos!');
         }
-        
-    } catch (error) {
-        console.error('Erro ao sincronizar dados:', error);
-        mostrarNotificacao('Erro ao sincronizar dados com a nuvem.', 'error');
     }
-}
-
-// Funções auxiliares
-
-// Formatar data
-function formatarData(dataString) {
-    const data = new Date(dataString);
-    return data.toLocaleDateString('pt-BR');
-}
-
-// Formatar moeda
-function formatarMoeda(valor, moeda = 'BRL') {
-    return new Intl.NumberFormat('pt-BR', { 
-        style: 'currency', 
-        currency: moeda 
-    }).format(valor);
-}
-
-// Mostrar notificação
-function mostrarNotificacao(mensagem, tipo = 'success') {
-    const notificacao = document.getElementById('notification');
-    notificacao.textContent = mensagem;
-    notificacao.style.backgroundColor = tipo === 'error' ? '#e63946' : '#0d838c';
-    notificacao.classList.add('show');
     
-    setTimeout(() => {
-        notificacao.classList.remove('show');
-    }, 3000);
-}
-
-// Verificar se há dados compartilhados na URL ao carregar
-document.addEventListener('DOMContentLoaded', carregarDadosCompartilhados);
+    // Login
+    function abrirModalLogin() {
+        document.getElementById('loginModal').style.display = 'block';
+    }
+    
+    // Login
+    function fazerLogin() {
+        mostrarNotificacao('Função de login em desenvolvimento');
+    }
+    
+    // Registro
+    function registrarUsuario() {
+        mostrarNotificacao('Função de registro em desenvolvimento');
+    }
+    
+    // Cliente
+    function abrirModalCliente() {
+        document.getElementById('clientModal').style.display = 'block';
+    }
+    
+    // Salvar cliente
+    function salvarCliente() {
+        mostrarNotificacao('Função de salvar cliente em desenvolvimento');
+    }
+    </script>
+    
+    <!-- Script de correção para garantir que os eventos sejam aplicados corretamente -->
+    <script>
+        // Verificação secundária para garantir que os botões funcionem
+        window.addEventListener('load', function() {
+            console.log('Script de verificação carregado');
+            
+            // Se o calcular não tiver funcionado, re-aplicar evento
+            setTimeout(function() {
+                const calcBtn = document.getElementById('calcularBtn');
+                if (calcBtn) {
+                    console.log('Reaplicando evento ao botão de cálculo');
+                    
+                    // Clonar e substituir para garantir evento limpo
+                    const novoCalcBtn = calcBtn.cloneNode(true);
+                    calcBtn.parentNode.replaceChild(novoCalcBtn, calcBtn);
+                    
+                    // Adicionar evento
+                    novoCalcBtn.addEventListener('click', calcularPreco);
+                }
+            }, 1000);
+        });
+    </script>
+    
+    <!-- Service Worker com tratamento melhorado -->
+    <script>
+        // Verificar disponibilidade do Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                // Primeiro tentar atualizar qualquer Service Worker existente
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                    for (let registration of registrations) {
+                        registration.update();
+                        console.log('Service Worker atualizado');
+                    }
+                    
+                    // Registrar ou re-registrar o Service Worker após um pequeno atraso
+                    setTimeout(function() {
+                        navigator.serviceWorker.register('./sw.js')
+                            .then(reg => console.log('Service Worker registrado com sucesso'))
+                            .catch(err => console.error('Erro ao registrar Service Worker:', err));
+                    }, 1000);
+                });
+            });
+        }
+    </script>
+</body>
+</html>
