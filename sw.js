@@ -1,250 +1,213 @@
-const CACHE_NAME = 'calculadora-v1.2';
+const CACHE_NAME = 'led-line-calculator-v2.0';
 const urlsToCache = [
   './',
   './index.html',
   './manifest.json',
   './icon-192.png',
   './icon-512.png',
-  'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap',
-  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css',
-  'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js',
-  'https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js',
-  'https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js',
-  'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js',
+  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap',
+  'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
+  'https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'
 ];
 
 // Instalação do Service Worker
 self.addEventListener('install', event => {
-  console.log('Service Worker: Instalando...');
+  console.log('[ServiceWorker] Instalando...');
+  
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then(cache => {
-        console.log('Service Worker: Cache aberto');
+        console.log('[ServiceWorker] Cacheando arquivos');
         return cache.addAll(urlsToCache);
       })
       .then(() => {
-        console.log('Service Worker: Todos os recursos foram armazenados em cache');
-        return self.skipWaiting(); // Força o Service Worker em waiting a se tornar o ativo
+        console.log('[ServiceWorker] Cache completo');
+        return self.skipWaiting();
+      })
+      .catch(err => {
+        console.error('[ServiceWorker] Erro no cache:', err);
       })
   );
 });
 
 // Ativação do Service Worker
 self.addEventListener('activate', event => {
-  console.log('Service Worker: Ativando...');
+  console.log('[ServiceWorker] Ativando...');
+  
   const cacheWhitelist = [CACHE_NAME];
   
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
         cacheNames.map(cacheName => {
-          if (cacheWhitelist.indexOf(cacheName) === -1) {
-            console.log('Service Worker: Excluindo cache antigo', cacheName);
+          if (!cacheWhitelist.includes(cacheName)) {
+            console.log('[ServiceWorker] Removendo cache antigo:', cacheName);
             return caches.delete(cacheName);
           }
         })
       );
     })
     .then(() => {
-      console.log('Service Worker: Ativado e controlando a página');
-      return self.clients.claim(); // Faz o SW assumir o controle de todos os clientes imediatamente
+      console.log('[ServiceWorker] Ativação completa');
+      return self.clients.claim();
     })
   );
 });
 
-// Estratégia de cache: Stale-While-Revalidate
-// Primeiro tenta do cache, depois da rede, e então atualiza o cache
+// Estratégia de cache: Network First com fallback para cache
 self.addEventListener('fetch', event => {
-  // Ignorar URLs de API ou análise
-  if (event.request.url.includes('analytics') || 
-      event.request.url.includes('awesomeapi.com.br') || 
-      event.request.url.includes('exchangerate-api.com')) {
+  // Ignorar requisições que não são GET
+  if (event.request.method !== 'GET') {
     return;
   }
   
-  // Para requisições GET, usamos a estratégia de cache
-  if (event.request.method === 'GET') {
+  // URLs de API que não devem ser cacheadas
+  const apiUrls = [
+    'api.exchangerate-api.com',
+    'economia.awesomeapi.com.br'
+  ];
+  
+  const isApiRequest = apiUrls.some(url => event.request.url.includes(url));
+  
+  if (isApiRequest) {
+    // Para APIs, sempre tentar rede primeiro
     event.respondWith(
-      caches.open(CACHE_NAME).then(cache => {
-        return cache.match(event.request).then(cachedResponse => {
-          // Clonar a requisição porque ela só pode ser usada uma vez
-          const fetchPromise = fetch(event.request.clone())
-            .then(networkResponse => {
-              // Verificar se a resposta é válida
-              if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
-                // Clonar a resposta porque ela só pode ser usada uma vez
-                cache.put(event.request, networkResponse.clone());
-              }
-              return networkResponse;
-            })
-            .catch(error => {
-              console.log('Service Worker: Falha ao buscar recurso na rede', error);
-              // Se houver um erro, retornamos a resposta em cache ou uma página offline
-              return cachedResponse;
-            });
+      fetch(event.request)
+        .then(response => {
+          // Clonar a resposta para cache
+          const responseToCache = response.clone();
           
-          // Retornar a resposta em cache imediatamente se disponível, 
-          // ou esperar a resposta da rede
-          return cachedResponse || fetchPromise;
-        });
-      })
+          caches.open(CACHE_NAME).then(cache => {
+            cache.put(event.request, responseToCache);
+          });
+          
+          return response;
+        })
+        .catch(() => {
+          // Se falhar, tentar cache
+          return caches.match(event.request);
+        })
+    );
+  } else {
+    // Para recursos estáticos, cache primeiro
+    event.respondWith(
+      caches.match(event.request)
+        .then(response => {
+          if (response) {
+            // Retornar do cache
+            return response;
+          }
+          
+          // Se não estiver no cache, buscar na rede
+          return fetch(event.request)
+            .then(response => {
+              // Verificar se é uma resposta válida
+              if (!response || response.status !== 200 || response.type !== 'basic') {
+                return response;
+              }
+              
+              // Clonar a resposta
+              const responseToCache = response.clone();
+              
+              caches.open(CACHE_NAME).then(cache => {
+                cache.put(event.request, responseToCache);
+              });
+              
+              return response;
+            });
+        })
+        .catch(() => {
+          // Se tudo falhar, retornar página offline
+          if (event.request.destination === 'document') {
+            return caches.match('./index.html');
+          }
+        })
     );
   }
 });
 
-// Sincronizar dados quando online
+// Sincronização em background
 self.addEventListener('sync', event => {
-  console.log('Service Worker: Evento de sincronização detectado', event.tag);
+  console.log('[ServiceWorker] Sincronização em background');
   
-  if (event.tag === 'sync-orcamentos') {
+  if (event.tag === 'sync-data') {
     event.waitUntil(syncData());
   }
 });
 
-// Função para sincronizar dados
 async function syncData() {
-  console.log('Service Worker: Sincronizando dados...');
+  console.log('[ServiceWorker] Sincronizando dados...');
   
-  // Notificar todos os clientes abertos para sincronizar dados
-  const allClients = await self.clients.matchAll({ includeUncontrolled: true });
+  // Notificar clientes para sincronizar
+  const clients = await self.clients.matchAll();
   
-  allClients.forEach(client => {
+  clients.forEach(client => {
     client.postMessage({
       type: 'SYNC_REQUIRED',
-      message: 'A sincronização é necessária'
+      message: 'Sincronização disponível'
     });
   });
 }
 
-// Gerenciar notificações push
-self.addEventListener('push', event => {
-  const data = event.data.json();
-  
-  const options = {
-    body: data.body,
-    icon: './icon-192.png',
-    badge: './icon-192.png',
-    vibrate: [100, 50, 100],
-    data: {
-      dateOfArrival: Date.now(),
-      primaryKey: '1',
-      url: data.url || '/'
-    },
-    actions: [
-      {
-        action: 'view', 
-        title: 'Ver'
-      },
-      {
-        action: 'close', 
-        title: 'Fechar'
-      }
-    ]
-  };
-  
-  event.waitUntil(
-    self.registration.showNotification(data.title, options)
-  );
-});
-
-// Gerenciar cliques em notificações
-self.addEventListener('notificationclick', event => {
-  const notification = event.notification;
-  const action = event.action;
-  const primaryKey = notification.data.primaryKey;
-  
-  notification.close();
-  
-  if (action === 'view') {
-    const url = notification.data.url || '/';
-    event.waitUntil(
-      clients.openWindow(url)
-    );
-  }
-});
-
-// Adicionar manipulador de mensagens para comunicação com cliente
+// Gerenciar mensagens
 self.addEventListener('message', event => {
-  console.log('Service Worker: Mensagem recebida do cliente', event.data);
+  console.log('[ServiceWorker] Mensagem recebida:', event.data);
   
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
   }
 });
 
-// Gerenciamento avançado de falhas na rede
-const netErrorHandlers = {
-  fetchWithTimeout: (request, timeout = 8000) => {
-    return new Promise((resolve, reject) => {
-      const timeoutId = setTimeout(() => {
-        reject(new Error("Network request timeout"));
-      }, timeout);
-      
-      fetch(request).then(
-        (response) => {
-          clearTimeout(timeoutId);
-          resolve(response);
-        },
-        (err) => {
-          clearTimeout(timeoutId);
-          reject(err);
-        }
-      );
-    });
-  },
+// Push notifications (preparado para futuro)
+self.addEventListener('push', event => {
+  const options = {
+    body: event.data ? event.data.text() : 'Nova atualização disponível',
+    icon: './icon-192.png',
+    badge: './icon-192.png',
+    vibrate: [100, 50, 100],
+    data: {
+      dateOfArrival: Date.now(),
+      primaryKey: '1'
+    },
+    actions: [
+      {
+        action: 'explore',
+        title: 'Ver detalhes',
+        icon: './icon-192.png'
+      },
+      {
+        action: 'close',
+        title: 'Fechar',
+        icon: './icon-192.png'
+      }
+    ]
+  };
   
-  handleNetworkError: async (request) => {
-    try {
-      // Tentar buscar da rede com timeout
-      return await netErrorHandlers.fetchWithTimeout(request);
-    } catch (error) {
-      console.error('Erro de rede:', error);
-      
-      // Verificar se é uma API de cotação com fallback
-      if (request.url.includes('awesomeapi.com.br')) {
-        try {
-          // Tentar API alternativa
-          const fallbackResponse = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-          return fallbackResponse;
-        } catch (fallbackError) {
-          // Se falhar, verificar no cache
-          const cachedResponse = await caches.match(request);
-          if (cachedResponse) {
-            return cachedResponse;
-          }
-          
-          // Se não houver cache, retornar resposta de erro offline customizada
-          return new Response(
-            JSON.stringify({
-              error: 'offline',
-              message: 'Você está offline. Por favor, verifique sua conexão.'
-            }),
-            {
-              status: 503,
-              headers: { 'Content-Type': 'application/json' }
-            }
-          );
-        }
-      }
-      
-      // Para outros tipos de requisição, tentar o cache
-      const cachedResponse = await caches.match(request);
-      if (cachedResponse) {
-        return cachedResponse;
-      }
-      
-      // Se a navegação falhar e não estiver em cache, redirecionar para página offline
-      if (request.mode === 'navigate') {
-        const offlinePage = await caches.match('./index.html');
-        if (offlinePage) {
-          return offlinePage;
-        }
-      }
-      
-      // Para todos os outros casos, retornar um erro genérico
-      return new Response('Falha na rede', { status: 408, headers: { 'Content-Type': 'text/plain' } });
-    }
+  event.waitUntil(
+    self.registration.showNotification('LED LINE Calculator', options)
+  );
+});
+
+// Click em notificação
+self.addEventListener('notificationclick', event => {
+  console.log('[ServiceWorker] Notificação clicada');
+  
+  event.notification.close();
+  
+  if (event.action === 'explore') {
+    event.waitUntil(
+      clients.openWindow('/')
+    );
   }
-};
+});
+
+// Tratamento de erros
+self.addEventListener('error', event => {
+  console.error('[ServiceWorker] Erro:', event.error);
+});
+
+self.addEventListener('unhandledrejection', event => {
+  console.error('[ServiceWorker] Promise rejeitada:', event.reason);
+});
