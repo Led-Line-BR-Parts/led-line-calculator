@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LED LINE BR PARTS - CALCULADORA</title>
+    <title>LED LINE BR PARTS - CALCULADORA PRO</title>
     
     <!-- PWA Meta Tags -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="LED LINE Calculadora">
+    <meta name="apple-mobile-web-app-title" content="LED LINE Pro">
     <link rel="apple-touch-icon" href="icon-192.png">
     <meta name="theme-color" content="#0d838c">
     <link rel="manifest" href="manifest.json">
@@ -16,7 +16,7 @@
     <!-- Fonts e CSS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <!-- Chart.js para gráficos -->
@@ -32,29 +32,31 @@
             --primary-dark: #0a6a71;
             --primary-light: #0fa3af;
             --secondary: #4cc9f0;
-            --success: #28a745;
-            --danger: #dc3545;
-            --warning: #ffc107;
-            --info: #17a2b8;
-            --light: #f8f9fa;
-            --dark: #212529;
-            --gray: #6c757d;
-            --gray-light: #e9ecef;
-            --gray-dark: #343a40;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --light: #f8fafc;
+            --dark: #0f172a;
+            --gray: #64748b;
+            --gray-light: #e2e8f0;
+            --gray-dark: #334155;
             --white: #ffffff;
             --black: #000000;
             
             --border-radius: 12px;
             --border-radius-sm: 8px;
-            --box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --border-radius-xs: 4px;
+            --box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            --box-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --box-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             
-            --background: #f5f7fa;
-            --text: #2d3748;
+            --background: #f1f5f9;
+            --text: #1e293b;
             --card-bg: #ffffff;
             --input-bg: #ffffff;
-            --hover-bg: #f7fafc;
+            --hover-bg: #f8fafc;
         }
         
         [data-theme="dark"] {
@@ -83,13 +85,14 @@
             min-height: 100vh;
         }
         
-        /* Modern Header */
+        /* Header */
         .header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
-            padding: 2rem 0;
+            padding: 1.5rem 0;
             position: relative;
             overflow: hidden;
+            box-shadow: var(--box-shadow-lg);
         }
         
         .header::before {
@@ -104,149 +107,181 @@
         }
         
         .header-content {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 0 2rem;
             position: relative;
             z-index: 1;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
         .header h1 {
-            font-size: 2rem;
+            font-size: 1.75rem;
             font-weight: 700;
-            margin-bottom: 0.5rem;
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 0.75rem;
         }
         
-        .header h1 i {
-            font-size: 1.5rem;
+        .header-info {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+        
+        .header-stat {
+            text-align: center;
+        }
+        
+        .header-stat-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+        
+        .header-stat-label {
+            font-size: 0.75rem;
             opacity: 0.9;
-        }
-        
-        .header p {
-            opacity: 0.95;
-            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         /* Container */
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 2rem;
         }
         
-        /* Modern Card */
+        /* Grid Layout */
+        .main-grid {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            position: sticky;
+            top: 2rem;
+            height: fit-content;
+        }
+        
+        /* Card */
         .card {
             background: var(--card-bg);
             border-radius: var(--border-radius);
             box-shadow: var(--box-shadow);
-            padding: 2rem;
-            margin-bottom: 2rem;
+            overflow: hidden;
             transition: var(--transition);
             border: 1px solid rgba(0, 0, 0, 0.05);
         }
         
-        .card:hover {
-            box-shadow: var(--box-shadow-lg);
-            transform: translateY(-2px);
-        }
-        
         .card-header {
+            padding: 1.25rem 1.5rem;
+            border-bottom: 1px solid var(--gray-light);
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 2px solid var(--gray-light);
         }
         
         .card-title {
-            font-size: 1.25rem;
+            font-size: 1.125rem;
             font-weight: 600;
-            color: var(--primary);
+            color: var(--text);
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
         
-        /* Modern Tabs */
-        .tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 2rem;
-            background: var(--card-bg);
-            padding: 0.5rem;
-            border-radius: var(--border-radius);
-            box-shadow: var(--box-shadow);
-            overflow-x: auto;
+        .card-body {
+            padding: 1.5rem;
         }
         
-        .tab-button {
-            padding: 0.75rem 1.5rem;
-            background: transparent;
-            border: none;
-            color: var(--gray);
-            font-weight: 500;
-            cursor: pointer;
-            border-radius: var(--border-radius-sm);
-            transition: var(--transition);
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .tab-button:hover {
-            background: var(--hover-bg);
-            color: var(--primary);
-        }
-        
-        .tab-button.active {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 4px 6px -1px rgba(13, 131, 140, 0.3);
-        }
-        
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.3s ease-in;
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        /* Modern Form Elements */
-        .form-group {
+        /* Custos Categories */
+        .custos-categoria {
             margin-bottom: 1.5rem;
         }
         
-        .form-group label {
+        .custos-categoria-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            background: linear-gradient(135deg, rgba(13, 131, 140, 0.1) 0%, rgba(76, 201, 240, 0.05) 100%);
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .custos-categoria-header:hover {
+            background: linear-gradient(135deg, rgba(13, 131, 140, 0.15) 0%, rgba(76, 201, 240, 0.1) 100%);
+        }
+        
+        .custos-categoria-title {
+            font-weight: 600;
+            font-size: 0.95rem;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+        }
+        
+        .custos-categoria-total {
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .custos-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--border-radius-xs);
+            transition: var(--transition);
+        }
+        
+        .custos-item:hover {
+            background: var(--hover-bg);
+        }
+        
+        .custos-item-nome {
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .custos-item-valor {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+        
+        .form-group label {
+            display: block;
             margin-bottom: 0.5rem;
             font-weight: 500;
+            font-size: 0.875rem;
             color: var(--text);
-            font-size: 0.95rem;
         }
         
         .form-group input,
         .form-group select,
         .form-group textarea {
             width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid var(--gray-light);
+            padding: 0.625rem 0.875rem;
+            border: 1px solid var(--gray-light);
             border-radius: var(--border-radius-sm);
             font-family: inherit;
-            font-size: 1rem;
+            font-size: 0.925rem;
             background: var(--input-bg);
             color: var(--text);
             transition: var(--transition);
@@ -260,19 +295,28 @@
             box-shadow: 0 0 0 3px rgba(13, 131, 140, 0.1);
         }
         
+        .input-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .input-group input {
+            flex: 1;
+        }
+        
         .form-row {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
         }
         
-        /* Modern Buttons */
+        /* Buttons */
         .btn {
-            padding: 0.75rem 1.5rem;
+            padding: 0.625rem 1.25rem;
             border: none;
             border-radius: var(--border-radius-sm);
             font-family: inherit;
-            font-size: 1rem;
+            font-size: 0.875rem;
             font-weight: 500;
             cursor: pointer;
             transition: var(--transition);
@@ -283,23 +327,13 @@
             text-decoration: none;
         }
         
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: var(--box-shadow-md);
+        }
+        
         .btn-primary {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px -5px rgba(13, 131, 140, 0.4);
-        }
-        
-        .btn-secondary {
-            background: var(--gray-light);
-            color: var(--dark);
-        }
-        
-        .btn-secondary:hover {
-            background: var(--gray);
             color: white;
         }
         
@@ -308,71 +342,157 @@
             color: white;
         }
         
+        .btn-secondary {
+            background: var(--gray-light);
+            color: var(--dark);
+        }
+        
         .btn-danger {
             background: var(--danger);
             color: white;
         }
         
         .btn-sm {
-            padding: 0.5rem 1rem;
-            font-size: 0.875rem;
+            padding: 0.375rem 0.75rem;
+            font-size: 0.8125rem;
         }
         
         .btn-block {
             width: 100%;
         }
         
-        /* Custos Fixos Section */
-        .custos-fixos-container {
-            background: linear-gradient(135deg, rgba(13, 131, 140, 0.05) 0%, rgba(76, 201, 240, 0.05) 100%);
-            border: 2px solid var(--primary);
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
+        .btn-icon {
+            padding: 0.5rem;
+            border-radius: 50%;
         }
         
-        .custos-fixos-header {
+        /* Result Box */
+        .result-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+            border: 2px solid var(--success);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        
+        .result-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            justify-content: space-between;
             margin-bottom: 1rem;
         }
         
-        .custos-fixos-list {
+        .result-title {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: var(--success);
+        }
+        
+        .result-grid {
             display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .result-item {
+            background: var(--card-bg);
+            padding: 0.875rem;
+            border-radius: var(--border-radius-sm);
+        }
+        
+        .result-label {
+            font-size: 0.75rem;
+            color: var(--gray);
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .result-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .result-highlight {
+            background: var(--card-bg);
+            border-radius: var(--border-radius-sm);
+            padding: 1.25rem;
+            text-align: center;
+            margin-top: 1rem;
+        }
+        
+        .result-highlight .result-value {
+            font-size: 2rem;
+            color: var(--success);
+        }
+        
+        /* Info Alert */
+        .info-alert {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.1) 100%);
+            border-left: 4px solid var(--info);
+            border-radius: var(--border-radius-sm);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .info-alert-title {
+            font-weight: 600;
+            color: var(--info);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
             gap: 0.5rem;
         }
         
-        .custo-fixo-item {
-            display: grid;
-            grid-template-columns: 1fr auto auto auto;
-            gap: 1rem;
-            align-items: center;
-            padding: 0.75rem;
-            background: var(--card-bg);
+        .info-alert-text {
+            font-size: 0.875rem;
+            color: var(--text);
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.25rem;
+            background: var(--gray-light);
+            padding: 0.25rem;
             border-radius: var(--border-radius-sm);
-            border: 1px solid var(--gray-light);
+            margin-bottom: 1.5rem;
         }
         
-        .custo-fixo-nome {
+        .tab-button {
+            flex: 1;
+            padding: 0.625rem 1rem;
+            background: transparent;
+            border: none;
+            color: var(--gray);
             font-weight: 500;
+            font-size: 0.875rem;
+            cursor: pointer;
+            border-radius: calc(var(--border-radius-sm) - 2px);
+            transition: var(--transition);
         }
         
-        .custo-fixo-valor {
+        .tab-button:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+        
+        .tab-button.active {
+            background: var(--white);
             color: var(--primary);
-            font-weight: 600;
+            box-shadow: var(--box-shadow);
         }
         
-        .custo-fixo-tipo {
-            padding: 0.25rem 0.5rem;
-            background: var(--primary);
-            color: white;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            text-transform: uppercase;
+        .tab-content {
+            display: none;
         }
         
-        /* Modal Styles */
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -388,11 +508,10 @@
         .modal-content {
             background: var(--card-bg);
             margin: 5% auto;
-            padding: 0;
             border-radius: var(--border-radius);
             width: 90%;
             max-width: 600px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            box-shadow: var(--box-shadow-lg);
             animation: slideIn 0.3s ease-out;
         }
         
@@ -409,17 +528,15 @@
         
         .modal-header {
             padding: 1.5rem;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            border-bottom: 1px solid var(--gray-light);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
-        .modal-header h3 {
-            margin: 0;
+        .modal-title {
             font-size: 1.25rem;
+            font-weight: 600;
         }
         
         .modal-body {
@@ -428,143 +545,80 @@
         
         .modal-footer {
             padding: 1rem 1.5rem;
-            background: var(--gray-light);
-            border-radius: 0 0 var(--border-radius) var(--border-radius);
+            border-top: 1px solid var(--gray-light);
             display: flex;
             justify-content: flex-end;
             gap: 0.5rem;
         }
         
         .close-modal {
-            color: white;
+            color: var(--gray);
             font-size: 1.5rem;
             cursor: pointer;
-            opacity: 0.9;
-            transition: opacity 0.2s;
+            transition: var(--transition);
         }
         
         .close-modal:hover {
-            opacity: 1;
+            color: var(--danger);
         }
         
         /* Theme Switch */
         .theme-switch {
             position: fixed;
-            top: 1rem;
-            right: 1rem;
+            bottom: 2rem;
+            right: 2rem;
             z-index: 100;
             background: var(--card-bg);
             border-radius: 50px;
-            padding: 0.5rem;
-            box-shadow: var(--box-shadow);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        .theme-switch input {
-            display: none;
-        }
-        
-        .theme-switch label {
+            padding: 0.75rem;
+            box-shadow: var(--box-shadow-lg);
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
             transition: var(--transition);
         }
         
-        .theme-switch label:hover {
-            background: var(--hover-bg);
+        .theme-switch:hover {
+            transform: scale(1.1);
         }
         
-        /* Results Section */
-        .result {
-            display: none;
-            background: linear-gradient(135deg, rgba(13, 131, 140, 0.05) 0%, rgba(76, 201, 240, 0.05) 100%);
-            border: 2px solid var(--primary);
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            margin-top: 2rem;
-        }
-        
-        .result-header {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            color: white;
-            padding: 1rem;
-            margin: -1.5rem -1.5rem 1.5rem;
-            border-radius: var(--border-radius) var(--border-radius) 0 0;
-        }
-        
-        .result-grid {
+        /* Stats Cards */
+        .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 1rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 2rem;
         }
         
-        .result-item {
+        .stat-card {
             background: var(--card-bg);
-            padding: 1rem;
-            border-radius: var(--border-radius-sm);
+            border-radius: var(--border-radius);
+            padding: 1.25rem;
+            box-shadow: var(--box-shadow);
             border-left: 4px solid var(--primary);
         }
         
-        .result-item-label {
-            font-size: 0.875rem;
+        .stat-card-title {
+            font-size: 0.75rem;
             color: var(--gray);
-            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
         }
         
-        .result-item-value {
-            font-size: 1.25rem;
-            font-weight: 600;
+        .stat-card-value {
+            font-size: 1.5rem;
+            font-weight: 700;
             color: var(--primary);
         }
         
-        /* Notification */
-        .notification {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: var(--primary);
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: var(--border-radius-sm);
-            box-shadow: var(--box-shadow-lg);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            transform: translateX(400px);
-            transition: transform 0.3s ease-out;
-            z-index: 1001;
+        .stat-card-info {
+            font-size: 0.8125rem;
+            color: var(--gray);
+            margin-top: 0.25rem;
         }
         
-        .notification.show {
-            transform: translateX(0);
-        }
-        
-        .notification.error {
-            background: var(--danger);
-        }
-        
-        .notification.warning {
-            background: var(--warning);
-            color: var(--dark);
-        }
-        
-        .notification.success {
-            background: var(--success);
-        }
-        
-        /* Table View */
+        /* Table */
         .table-responsive {
             overflow-x: auto;
-            margin: -1rem;
-            padding: 1rem;
         }
         
         .table {
@@ -574,172 +628,61 @@
         }
         
         .table th {
-            background: var(--primary);
-            color: white;
-            padding: 1rem;
+            background: var(--gray-light);
+            padding: 0.75rem;
             text-align: left;
-            font-weight: 500;
-            position: sticky;
-            top: 0;
-            z-index: 10;
+            font-weight: 600;
+            font-size: 0.8125rem;
+            color: var(--gray-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .table td {
-            padding: 1rem;
+            padding: 0.75rem;
             border-bottom: 1px solid var(--gray-light);
-        }
-        
-        .table tbody tr {
-            transition: var(--transition);
+            font-size: 0.875rem;
         }
         
         .table tbody tr:hover {
             background: var(--hover-bg);
         }
         
-        /* Dashboard Cards */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
-        }
-        
-        .dashboard-card {
-            background: var(--card-bg);
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            box-shadow: var(--box-shadow);
-            border-left: 4px solid var(--primary);
-            transition: var(--transition);
-        }
-        
-        .dashboard-card:hover {
-            transform: translateY(-2px);
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--success);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: var(--border-radius-sm);
             box-shadow: var(--box-shadow-lg);
-        }
-        
-        .dashboard-card-title {
-            font-size: 0.875rem;
-            color: var(--gray);
-            margin-bottom: 0.5rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        
-        .dashboard-card-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-        
-        .dashboard-card-change {
-            font-size: 0.875rem;
-            margin-top: 0.5rem;
             display: flex;
             align-items: center;
-            gap: 0.25rem;
+            gap: 0.75rem;
+            transition: transform 0.3s ease-out;
+            z-index: 1001;
         }
         
-        .dashboard-card-change.positive {
-            color: var(--success);
+        .notification.show {
+            transform: translateX(-50%) translateY(0);
         }
         
-        .dashboard-card-change.negative {
-            color: var(--danger);
+        .notification.error {
+            background: var(--danger);
         }
         
-        /* Responsive */
-        @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-            
-            .card {
-                padding: 1.5rem;
-            }
-            
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            
-            .tabs {
-                flex-wrap: nowrap;
-                overflow-x: auto;
-                -webkit-overflow-scrolling: touch;
-            }
-            
-            .theme-switch {
-                top: auto;
-                bottom: 1rem;
-            }
-            
-            .notification {
-                left: 1rem;
-                right: 1rem;
-                bottom: 1rem;
-            }
-            
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .custo-fixo-item {
-                grid-template-columns: 1fr;
-                gap: 0.5rem;
-            }
-        }
-        
-        /* Loading Spinner */
-        .spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255, 255, 255, 0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 0.6s linear infinite;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        
-        /* Tooltip */
-        .tooltip {
-            position: relative;
-            display: inline-block;
-            cursor: help;
-        }
-        
-        .tooltip .tooltip-text {
-            visibility: hidden;
-            width: 200px;
-            background: var(--dark);
-            color: white;
-            text-align: center;
-            border-radius: var(--border-radius-sm);
-            padding: 0.5rem;
-            position: absolute;
-            z-index: 1;
-            bottom: 125%;
-            left: 50%;
-            margin-left: -100px;
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 0.875rem;
-        }
-        
-        .tooltip:hover .tooltip-text {
-            visibility: visible;
-            opacity: 1;
+        .notification.warning {
+            background: var(--warning);
         }
         
         /* Badge */
         .badge {
             display: inline-flex;
             align-items: center;
-            padding: 0.25rem 0.75rem;
+            padding: 0.25rem 0.625rem;
             font-size: 0.75rem;
             font-weight: 600;
             border-radius: 20px;
@@ -753,372 +696,445 @@
         }
         
         .badge-success {
-            background: rgba(40, 167, 69, 0.1);
+            background: rgba(16, 185, 129, 0.1);
             color: var(--success);
         }
         
-        .badge-danger {
-            background: rgba(220, 53, 69, 0.1);
-            color: var(--danger);
+        .badge-warning {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .main-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                position: relative;
+                top: 0;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .header-info {
+                width: 100%;
+                justify-content: space-around;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .result-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .theme-switch {
+                bottom: 1rem;
+                right: 1rem;
+            }
+        }
+        
+        /* Loading */
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.6s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        /* Custos Toggle */
+        .custos-toggle {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--success);
+            color: white;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .custos-toggle.inactive {
+            background: var(--gray-light);
+            color: var(--gray);
+        }
+        
+        .custos-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Quick Actions */
+        .quick-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .quick-action {
+            flex: 1;
+            padding: 0.5rem;
+            background: var(--hover-bg);
+            border: 1px solid var(--gray-light);
+            border-radius: var(--border-radius-sm);
+            font-size: 0.8125rem;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .quick-action:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .quick-action.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
     </style>
 </head>
 <body>
     <!-- Theme Switch -->
-    <div class="theme-switch">
-        <label for="theme-toggle">
-            <i class="fas fa-sun" id="theme-icon"></i>
-        </label>
-        <input type="checkbox" id="theme-toggle">
+    <div class="theme-switch" onclick="toggleTheme()">
+        <i class="fas fa-moon" id="theme-icon"></i>
     </div>
 
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <h1><i class="fas fa-calculator"></i> LED LINE BR PARTS</h1>
-            <p>Sistema Avançado de Cálculo de Preços</p>
+            <h1><i class="fas fa-calculator"></i> LED LINE BR PARTS PRO</h1>
+            <div class="header-info">
+                <div class="header-stat">
+                    <div class="header-stat-value" id="cotacao-header">R$ 5,00</div>
+                    <div class="header-stat-label">Cotação USD</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-value" id="custos-mensais-header">R$ 0,00</div>
+                    <div class="header-stat-label">Custos Mensais</div>
+                </div>
+                <div class="header-stat">
+                    <div class="header-stat-value" id="meta-faturamento-header">R$ 0,00</div>
+                    <div class="header-stat-label">Meta Faturamento</div>
+                </div>
+            </div>
         </div>
     </header>
 
     <!-- Main Container -->
     <div class="container">
-        <!-- Tabs -->
-        <div class="tabs">
-            <button class="tab-button active" data-tab="calculator">
-                <i class="fas fa-calculator"></i> Calculadora
-            </button>
-            <button class="tab-button" data-tab="fixed-costs">
-                <i class="fas fa-file-invoice-dollar"></i> Custos Fixos
-            </button>
-            <button class="tab-button" data-tab="history">
-                <i class="fas fa-history"></i> Histórico
-            </button>
-            <button class="tab-button" data-tab="dashboard">
-                <i class="fas fa-chart-line"></i> Dashboard
-            </button>
+        <!-- Stats Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-card-title">Custos Empresariais</div>
+                <div class="stat-card-value" id="stat-custos-empresa">R$ 0,00</div>
+                <div class="stat-card-info">Fixos + Variáveis</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-title">Custos Pessoais</div>
+                <div class="stat-card-value" id="stat-custos-pessoais">R$ 0,00</div>
+                <div class="stat-card-info">Suas despesas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-title">Ponto de Equilíbrio</div>
+                <div class="stat-card-value" id="stat-ponto-equilibrio">R$ 0,00</div>
+                <div class="stat-card-info">Mínimo para cobrir custos</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-card-title">Orçamentos Salvos</div>
+                <div class="stat-card-value" id="stat-orcamentos">0</div>
+                <div class="stat-card-info">Este mês</div>
+            </div>
         </div>
 
-        <!-- Calculator Tab -->
-        <div id="calculator" class="tab-content active">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">
-                        <i class="fas fa-cog"></i> Configurações e Cálculo
-                    </h2>
-                </div>
-
-                <!-- Custos Fixos Resumo -->
-                <div class="custos-fixos-container" id="custos-fixos-resumo">
-                    <div class="custos-fixos-header">
-                        <h3 style="margin: 0; color: var(--primary);">
-                            <i class="fas fa-info-circle"></i> Custos Fixos Mensais
+        <!-- Main Grid -->
+        <div class="main-grid">
+            <!-- Sidebar - Sistema de Custos -->
+            <div class="sidebar">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-coins"></i> Central de Custos
                         </h3>
-                        <span class="badge badge-primary" id="total-custos-fixos">R$ 0,00</span>
-                    </div>
-                    <p style="margin: 0.5rem 0; font-size: 0.9rem; color: var(--gray);">
-                        Seus custos fixos mensais serão distribuídos proporcionalmente com base no volume de vendas esperado.
-                    </p>
-                    <div style="margin-top: 1rem;">
-                        <label for="vendas-esperadas" style="display: block; margin-bottom: 0.5rem;">
-                            <i class="fas fa-chart-bar"></i> Vendas Esperadas no Mês:
-                        </label>
-                        <input type="number" id="vendas-esperadas" value="100" min="1" style="width: 150px;">
-                        <button class="btn btn-sm btn-primary" onclick="abrirModalCustosFixos()" style="margin-left: 1rem;">
-                            <i class="fas fa-edit"></i> Gerenciar Custos
+                        <button class="btn btn-sm btn-primary" onclick="abrirModalCusto()">
+                            <i class="fas fa-plus"></i>
                         </button>
                     </div>
-                </div>
-
-                <!-- Form -->
-                <form id="calculator-form">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="nomeProduto">
-                                <i class="fas fa-box"></i> Nome do Produto
-                                <span class="tooltip">
-                                    <i class="fas fa-question-circle" style="color: var(--gray); font-size: 0.875rem;"></i>
-                                    <span class="tooltip-text">Nome ou descrição do produto</span>
-                                </span>
-                            </label>
-                            <input type="text" id="nomeProduto" placeholder="Ex: Camiseta LED LINE" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="dataCotacao">
-                                <i class="fas fa-calendar"></i> Data da Cotação
-                            </label>
-                            <input type="date" id="dataCotacao" required>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="custoDolar">
-                                <i class="fas fa-dollar-sign"></i> Custo em Dólar (USD)
-                            </label>
-                            <input type="number" id="custoDolar" step="0.01" min="0" placeholder="10.00" required>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="cotacaoDolar">
-                                <i class="fas fa-exchange-alt"></i> Cotação do Dólar (R$)
-                            </label>
-                            <div style="display: flex; gap: 0.5rem;">
-                                <input type="number" id="cotacaoDolar" step="0.01" min="0" placeholder="5.00" required>
-                                <button type="button" class="btn btn-primary" onclick="atualizarCotacao()">
-                                    <i class="fas fa-sync-alt"></i>
-                                </button>
+                    <div class="card-body">
+                        <!-- Custos Empresariais Fixos -->
+                        <div class="custos-categoria">
+                            <div class="custos-categoria-header" onclick="toggleCategoria('empresa-fixos')">
+                                <div class="custos-categoria-title">
+                                    <i class="fas fa-building"></i> Empresariais Fixos
+                                </div>
+                                <div class="custos-categoria-total" id="total-empresa-fixos">R$ 0,00</div>
                             </div>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="margemLucro">
-                                <i class="fas fa-percent"></i> Margem de Lucro (%)
-                            </label>
-                            <input type="number" id="margemLucro" step="0.1" min="0" placeholder="40" required>
+                            <div id="custos-empresa-fixos" class="custos-lista"></div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="quantidade">
-                                <i class="fas fa-cubes"></i> Quantidade
-                            </label>
-                            <input type="number" id="quantidade" min="1" value="1" required>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="metodoPagamento">
-                                <i class="fas fa-credit-card"></i> Método de Pagamento
-                            </label>
-                            <select id="metodoPagamento" required>
-                                <option value="cartao">Cartão de Crédito (14.35%)</option>
-                                <option value="pix">Pix (0.79%)</option>
-                            </select>
+                        <!-- Custos Pessoais -->
+                        <div class="custos-categoria">
+                            <div class="custos-categoria-header" onclick="toggleCategoria('pessoais')">
+                                <div class="custos-categoria-title">
+                                    <i class="fas fa-user"></i> Pessoais
+                                </div>
+                                <div class="custos-categoria-total" id="total-pessoais">R$ 0,00</div>
+                            </div>
+                            <div id="custos-pessoais" class="custos-lista"></div>
                         </div>
 
-                        <div class="form-group">
-                            <label for="taxaYampi">
-                                <i class="fas fa-shopping-cart"></i> Taxa Yampi (%)
-                            </label>
-                            <input type="number" id="taxaYampi" step="0.01" min="0" value="2.5">
+                        <!-- Taxas de Pagamento -->
+                        <div class="custos-categoria">
+                            <div class="custos-categoria-header" onclick="toggleCategoria('pagamento')">
+                                <div class="custos-categoria-title">
+                                    <i class="fas fa-credit-card"></i> Taxas de Pagamento
+                                </div>
+                                <div class="custos-categoria-total">Por transação</div>
+                            </div>
+                            <div id="custos-pagamento" class="custos-lista"></div>
                         </div>
-                    </div>
 
-                    <div class="form-group">
-                        <label for="taxaImposto">
-                            <i class="fas fa-receipt"></i> Imposto (%)
-                        </label>
-                        <input type="number" id="taxaImposto" step="0.01" min="0" value="10">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="observacoes">
-                            <i class="fas fa-sticky-note"></i> Observações
-                        </label>
-                        <textarea id="observacoes" rows="3" placeholder="Informações adicionais..."></textarea>
-                    </div>
-
-                    <button type="submit" class="btn btn-primary btn-block">
-                        <i class="fas fa-calculator"></i> Calcular Preço
-                    </button>
-                </form>
-
-                <!-- Results -->
-                <div class="result" id="resultado">
-                    <div class="result-header">
-                        <h3 style="margin: 0;"><i class="fas fa-chart-pie"></i> Resultado do Cálculo</h3>
-                    </div>
-                    
-                    <div class="result-grid">
-                        <div class="result-item">
-                            <div class="result-item-label">Custo em Reais</div>
-                            <div class="result-item-value" id="res-custo-reais">R$ 0,00</div>
+                        <!-- Impostos e Taxas -->
+                        <div class="custos-categoria">
+                            <div class="custos-categoria-header" onclick="toggleCategoria('impostos')">
+                                <div class="custos-categoria-title">
+                                    <i class="fas fa-percentage"></i> Impostos
+                                </div>
+                                <div class="custos-categoria-total" id="total-impostos">0%</div>
+                            </div>
+                            <div id="custos-impostos" class="custos-lista"></div>
                         </div>
-                        <div class="result-item">
-                            <div class="result-item-label">Custos Fixos</div>
-                            <div class="result-item-value" id="res-custos-fixos">R$ 0,00</div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-item-label">Todas as Taxas</div>
-                            <div class="result-item-value" id="res-taxas">R$ 0,00</div>
-                        </div>
-                        <div class="result-item">
-                            <div class="result-item-label">Lucro Real</div>
-                            <div class="result-item-value" id="res-lucro">R$ 0,00</div>
-                        </div>
-                    </div>
-
-                    <div style="text-align: center; padding: 1.5rem; background: var(--card-bg); border-radius: var(--border-radius-sm); margin-top: 1rem;">
-                        <div style="font-size: 0.875rem; color: var(--gray); margin-bottom: 0.5rem;">Preço Final Unitário</div>
-                        <div style="font-size: 2.5rem; font-weight: 700; color: var(--primary);" id="res-preco-final">R$ 0,00</div>
-                        <div style="font-size: 1rem; color: var(--gray); margin-top: 0.5rem;">
-                            Total para <span id="res-quantidade">1</span> unidade(s): 
-                            <strong id="res-preco-total" style="color: var(--primary);">R$ 0,00</strong>
-                        </div>
-                    </div>
-
-                    <div style="margin-top: 1.5rem;">
-                        <canvas id="graficoDistribuicao" style="max-height: 300px;"></canvas>
-                    </div>
-
-                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
-                        <button class="btn btn-success" onclick="salvarOrcamento()">
-                            <i class="fas fa-save"></i> Salvar Orçamento
-                        </button>
-                        <button class="btn btn-primary" onclick="compartilharOrcamento()">
-                            <i class="fas fa-share-alt"></i> Compartilhar
-                        </button>
-                        <button class="btn btn-secondary" onclick="exportarPDF()">
-                            <i class="fas fa-file-pdf"></i> Exportar PDF
-                        </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Saved Items -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">
-                        <i class="fas fa-archive"></i> Orçamentos Salvos
-                    </h2>
-                    <div style="display: flex; gap: 0.5rem;">
-                        <button class="btn btn-sm btn-secondary" onclick="exportarCSV()">
-                            <i class="fas fa-file-csv"></i> CSV
-                        </button>
-                        <button class="btn btn-sm btn-danger" onclick="limparTodos()">
-                            <i class="fas fa-trash"></i> Limpar
+            <!-- Main Content -->
+            <div class="main-content">
+                <!-- Calculadora -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="card-title">
+                            <i class="fas fa-calculator"></i> Calculadora de Preços
+                        </h2>
+                        <button class="btn btn-sm btn-success" onclick="atualizarCotacao()">
+                            <i class="fas fa-sync"></i> Atualizar USD
                         </button>
                     </div>
-                </div>
-                <div id="orcamentos-salvos"></div>
-            </div>
-        </div>
+                    <div class="card-body">
+                        <form id="calculator-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Nome do Produto</label>
+                                    <input type="text" id="nomeProduto" placeholder="Ex: Camiseta LED LINE" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Custo do Produto (R$)</label>
+                                    <input type="number" id="custoProduto" step="0.01" placeholder="50.00" required>
+                                </div>
+                            </div>
 
-        <!-- Fixed Costs Tab -->
-        <div id="fixed-costs" class="tab-content">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">
-                        <i class="fas fa-file-invoice-dollar"></i> Gerenciamento de Custos Fixos
-                    </h2>
-                    <button class="btn btn-primary btn-sm" onclick="abrirModalAdicionarCusto()">
-                        <i class="fas fa-plus"></i> Adicionar Custo
-                    </button>
-                </div>
-                
-                <div id="lista-custos-fixos"></div>
-            </div>
-        </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Margem de Lucro Desejada (%)</label>
+                                    <input type="number" id="margemLucro" step="0.1" placeholder="40" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Quantidade</label>
+                                    <input type="number" id="quantidade" value="1" min="1" required>
+                                </div>
+                            </div>
 
-        <!-- History Tab -->
-        <div id="history" class="tab-content">
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">
-                        <i class="fas fa-chart-line"></i> Histórico de Cotações
-                    </h2>
-                </div>
-                <canvas id="cotacaoChart" style="max-height: 400px;"></canvas>
-            </div>
-        </div>
+                            <div class="form-group">
+                                <label>Método de Pagamento</label>
+                                <div class="quick-actions">
+                                    <div class="quick-action" onclick="selecionarPagamento('pix')">
+                                        <i class="fas fa-qrcode"></i> PIX
+                                    </div>
+                                    <div class="quick-action" onclick="selecionarPagamento('boleto')">
+                                        <i class="fas fa-barcode"></i> Boleto
+                                    </div>
+                                    <div class="quick-action active" onclick="selecionarPagamento('cartao')">
+                                        <i class="fas fa-credit-card"></i> Cartão
+                                    </div>
+                                </div>
+                                <input type="hidden" id="metodoPagamento" value="cartao">
+                            </div>
 
-        <!-- Dashboard Tab -->
-        <div id="dashboard" class="tab-content">
-            <div class="dashboard-grid">
-                <div class="dashboard-card">
-                    <div class="dashboard-card-title">Total de Orçamentos</div>
-                    <div class="dashboard-card-value" id="dash-total-orcamentos">0</div>
-                    <div class="dashboard-card-change positive">
-                        <i class="fas fa-arrow-up"></i> +12% este mês
+                            <div class="form-group">
+                                <label>Observações</label>
+                                <textarea id="observacoes" rows="2" placeholder="Informações adicionais..."></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block">
+                                <i class="fas fa-calculator"></i> Calcular Preço de Venda
+                            </button>
+                        </form>
+
+                        <!-- Resultado -->
+                        <div class="result-box" id="resultado" style="display: none;">
+                            <div class="result-header">
+                                <div class="result-title">
+                                    <i class="fas fa-check-circle"></i> Cálculo Completo
+                                </div>
+                                <div>
+                                    <button class="btn btn-sm btn-success" onclick="salvarOrcamento()">
+                                        <i class="fas fa-save"></i> Salvar
+                                    </button>
+                                    <button class="btn btn-sm btn-primary" onclick="exportarPDF()">
+                                        <i class="fas fa-file-pdf"></i> PDF
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="result-grid">
+                                <div class="result-item">
+                                    <div class="result-label">Custo Base</div>
+                                    <div class="result-value" id="res-custo-base">R$ 0,00</div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">Custos Operacionais</div>
+                                    <div class="result-value" id="res-custos-operacionais">R$ 0,00</div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">Taxas e Impostos</div>
+                                    <div class="result-value" id="res-taxas">R$ 0,00</div>
+                                </div>
+                                <div class="result-item">
+                                    <div class="result-label">Lucro Líquido</div>
+                                    <div class="result-value" id="res-lucro">R$ 0,00</div>
+                                </div>
+                            </div>
+
+                            <div class="result-highlight">
+                                <div class="result-label">PREÇO DE VENDA UNITÁRIO</div>
+                                <div class="result-value" id="res-preco-final">R$ 0,00</div>
+                                <div style="margin-top: 0.5rem; font-size: 0.875rem; color: var(--gray);">
+                                    Total para <span id="res-quantidade">1</span> unidade(s): 
+                                    <strong id="res-preco-total">R$ 0,00</strong>
+                                </div>
+                            </div>
+
+                            <div class="info-alert" style="margin-top: 1rem;">
+                                <div class="info-alert-title">
+                                    <i class="fas fa-info-circle"></i> Análise de Break-Even
+                                </div>
+                                <div class="info-alert-text">
+                                    <div>• Você precisa vender <strong id="res-unidades-equilibrio">0</strong> unidades deste produto para cobrir todos os custos mensais</div>
+                                    <div>• Ou faturar <strong id="res-faturamento-equilibrio">R$ 0,00</strong> com outros produtos</div>
+                                    <div>• Margem real após todos os custos: <strong id="res-margem-real">0%</strong></div>
+                                </div>
+                            </div>
+
+                            <canvas id="grafico-distribuicao" style="max-height: 300px; margin-top: 1rem;"></canvas>
+                        </div>
                     </div>
                 </div>
-                <div class="dashboard-card">
-                    <div class="dashboard-card-title">Valor Total</div>
-                    <div class="dashboard-card-value" id="dash-valor-total">R$ 0,00</div>
-                    <div class="dashboard-card-change positive">
-                        <i class="fas fa-arrow-up"></i> +8% este mês
-                    </div>
-                </div>
-                <div class="dashboard-card">
-                    <div class="dashboard-card-title">Ticket Médio</div>
-                    <div class="dashboard-card-value" id="dash-ticket-medio">R$ 0,00</div>
-                    <div class="dashboard-card-change negative">
-                        <i class="fas fa-arrow-down"></i> -3% este mês
-                    </div>
-                </div>
-                <div class="dashboard-card">
-                    <div class="dashboard-card-title">Margem Média</div>
-                    <div class="dashboard-card-value" id="dash-margem-media">0%</div>
-                    <div class="dashboard-card-change positive">
-                        <i class="fas fa-arrow-up"></i> +2% este mês
-                    </div>
-                </div>
-            </div>
 
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">
-                        <i class="fas fa-chart-bar"></i> Análise de Vendas
-                    </h2>
+                <!-- Histórico -->
+                <div class="card" style="margin-top: 2rem;">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-history"></i> Orçamentos Recentes
+                        </h3>
+                        <div>
+                            <button class="btn btn-sm btn-secondary" onclick="exportarCSV()">
+                                <i class="fas fa-file-csv"></i> CSV
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div id="lista-orcamentos"></div>
+                    </div>
                 </div>
-                <canvas id="vendas-chart" style="max-height: 300px;"></canvas>
             </div>
         </div>
     </div>
 
-    <!-- Modal Custos Fixos -->
-    <div id="modal-custos" class="modal">
+    <!-- Modal Adicionar Custo -->
+    <div id="modal-custo" class="modal">
         <div class="modal-content">
             <div class="modal-header">
-                <h3><i class="fas fa-file-invoice-dollar"></i> Adicionar Custo Fixo</h3>
-                <span class="close-modal" onclick="fecharModal('modal-custos')">&times;</span>
+                <h3 class="modal-title">Adicionar Custo</h3>
+                <span class="close-modal" onclick="fecharModal('modal-custo')">&times;</span>
             </div>
             <div class="modal-body">
                 <div class="form-group">
-                    <label for="custo-nome">
-                        <i class="fas fa-tag"></i> Nome do Custo
-                    </label>
+                    <label>Categoria</label>
+                    <select id="custo-categoria" onchange="atualizarFormCusto()">
+                        <option value="empresa-fixo">Empresarial Fixo</option>
+                        <option value="pessoal">Pessoal</option>
+                        <option value="pagamento">Taxa de Pagamento</option>
+                        <option value="imposto">Imposto/Taxa</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Nome</label>
                     <input type="text" id="custo-nome" placeholder="Ex: Shopify">
                 </div>
-                <div class="form-row">
+
+                <div class="form-row" id="valores-container">
                     <div class="form-group">
-                        <label for="custo-valor">
-                            <i class="fas fa-money-bill"></i> Valor
-                        </label>
-                        <input type="number" id="custo-valor" step="0.01" placeholder="29.00">
+                        <label>Valor</label>
+                        <input type="number" id="custo-valor" step="0.01" placeholder="299.00">
                     </div>
                     <div class="form-group">
-                        <label for="custo-moeda">
-                            <i class="fas fa-coins"></i> Moeda
-                        </label>
-                        <select id="custo-moeda">
-                            <option value="BRL">R$ (Real)</option>
-                            <option value="USD">$ (Dólar)</option>
+                        <label>Tipo</label>
+                        <select id="custo-tipo">
+                            <option value="fixo">Valor Fixo (R$)</option>
+                            <option value="percentual">Percentual (%)</option>
                         </select>
                     </div>
                 </div>
-                <div class="form-group">
-                    <label for="custo-tipo">
-                        <i class="fas fa-list"></i> Tipo
-                    </label>
-                    <select id="custo-tipo">
-                        <option value="fixo">Valor Fixo</option>
-                        <option value="percentual">Percentual (%)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="custo-descricao">
-                        <i class="fas fa-comment"></i> Descrição
-                    </label>
-                    <textarea id="custo-descricao" rows="2" placeholder="Descrição opcional..."></textarea>
+
+                <div class="form-group" id="pagamento-container" style="display: none;">
+                    <label>Configuração de Taxa</label>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label style="font-size: 0.8rem;">Taxa Fixa (R$)</label>
+                            <input type="number" id="custo-taxa-fixa" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label style="font-size: 0.8rem;">Taxa % </label>
+                            <input type="number" id="custo-taxa-percentual" step="0.01" placeholder="2.99">
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
-                <button class="btn btn-secondary" onclick="fecharModal('modal-custos')">Cancelar</button>
-                <button class="btn btn-primary" onclick="salvarCustoFixo()">
+                <button class="btn btn-secondary" onclick="fecharModal('modal-custo')">Cancelar</button>
+                <button class="btn btn-primary" onclick="salvarCusto()">
                     <i class="fas fa-save"></i> Salvar
                 </button>
             </div>
@@ -1133,12 +1149,16 @@
 
     <script>
         // Estado Global
-        let custosFixos = [];
-        let orcamentosSalvos = [];
-        let cotacaoHistorico = [];
+        let custos = {
+            empresaFixos: [],
+            pessoais: [],
+            pagamento: [],
+            impostos: []
+        };
+        let orcamentos = [];
+        let cotacaoDolar = 5.00;
+        let metodoPagamentoSelecionado = 'cartao';
         let chartDistribuicao = null;
-        let chartCotacao = null;
-        let chartVendas = null;
 
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
@@ -1146,365 +1166,295 @@
         });
 
         function inicializar() {
-            // Carregar dados salvos
             carregarDados();
-            
-            // Configurar data atual
-            document.getElementById('dataCotacao').valueAsDate = new Date();
-            
-            // Configurar eventos
             configurarEventos();
-            
-            // Atualizar cotação do dólar
             atualizarCotacao();
-            
-            // Atualizar interface
-            atualizarListaCustosFixos();
-            atualizarOrcamentosSalvos();
-            atualizarDashboard();
-            atualizarResumoCustosFixos();
-            
-            // Verificar tema
+            atualizarInterface();
             verificarTema();
+            
+            // Adicionar custos padrão se primeira vez
+            if (!localStorage.getItem('ledLinePro')) {
+                adicionarCustosPadrao();
+            }
         }
 
         function configurarEventos() {
-            // Form submit
             document.getElementById('calculator-form').addEventListener('submit', function(e) {
                 e.preventDefault();
                 calcularPreco();
             });
-            
-            // Theme toggle
-            document.getElementById('theme-toggle').addEventListener('change', toggleTheme);
-            
-            // Tabs
-            document.querySelectorAll('.tab-button').forEach(button => {
-                button.addEventListener('click', function() {
-                    switchTab(this.getAttribute('data-tab'));
-                });
-            });
-            
-            // Vendas esperadas
-            document.getElementById('vendas-esperadas').addEventListener('change', function() {
-                if (document.getElementById('resultado').style.display !== 'none') {
-                    calcularPreco();
-                }
-            });
         }
 
-        function switchTab(tabId) {
-            // Update buttons
-            document.querySelectorAll('.tab-button').forEach(btn => {
-                btn.classList.remove('active');
-            });
-            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+        function adicionarCustosPadrao() {
+            // Custos Empresariais Fixos
+            custos.empresaFixos = [
+                { id: Date.now() + 1, nome: 'Shopify', valor: 299, tipo: 'fixo', ativo: true },
+                { id: Date.now() + 2, nome: 'Linktree', valor: 29, tipo: 'fixo', ativo: true },
+                { id: Date.now() + 3, nome: 'Symprosis', valor: 25, tipo: 'fixo', ativo: true },
+                { id: Date.now() + 4, nome: 'Yampi Plus', valor: 49.90, tipo: 'fixo', ativo: true }
+            ];
             
-            // Update content
-            document.querySelectorAll('.tab-content').forEach(content => {
-                content.classList.remove('active');
-            });
-            document.getElementById(tabId).classList.add('active');
+            // Custos Pessoais
+            custos.pessoais = [
+                { id: Date.now() + 5, nome: 'Plano de Saúde', valor: 500, tipo: 'fixo', ativo: true },
+                { id: Date.now() + 6, nome: 'Internet', valor: 100, tipo: 'fixo', ativo: true },
+                { id: Date.now() + 7, nome: 'Luz', valor: 150, tipo: 'fixo', ativo: true },
+                { id: Date.now() + 8, nome: 'Gasolina', valor: 400, tipo: 'fixo', ativo: true }
+            ];
             
-            // Refresh charts if needed
-            if (tabId === 'history') {
-                atualizarGraficoCotacao();
-            } else if (tabId === 'dashboard') {
-                atualizarDashboard();
-            }
-        }
-
-        function toggleTheme() {
-            const isChecked = document.getElementById('theme-toggle').checked;
-            const theme = isChecked ? 'dark' : 'light';
-            document.body.setAttribute('data-theme', theme);
-            document.getElementById('theme-icon').className = isChecked ? 'fas fa-moon' : 'fas fa-sun';
-            localStorage.setItem('theme', theme);
+            // Taxas de Pagamento
+            custos.pagamento = [
+                { id: Date.now() + 9, nome: 'PIX', metodo: 'pix', taxaFixa: 0, taxaPercentual: 0.99, ativo: true },
+                { id: Date.now() + 10, nome: 'Boleto', metodo: 'boleto', taxaFixa: 3.49, taxaPercentual: 0, ativo: true },
+                { id: Date.now() + 11, nome: 'Cartão (Vista)', metodo: 'cartao', taxaFixa: 0, taxaPercentual: 4.99, ativo: true },
+                { id: Date.now() + 12, nome: 'Cartão (Parcelado)', metodo: 'cartao_parcelado', taxaFixa: 0, taxaPercentual: 14.35, ativo: true }
+            ];
             
-            // Update charts
-            if (chartDistribuicao) {
-                atualizarTemaGrafico(chartDistribuicao);
-            }
-            if (chartCotacao) {
-                atualizarTemaGrafico(chartCotacao);
-            }
-            if (chartVendas) {
-                atualizarTemaGrafico(chartVendas);
-            }
-        }
-
-        function verificarTema() {
-            const theme = localStorage.getItem('theme') || 'light';
-            document.body.setAttribute('data-theme', theme);
-            document.getElementById('theme-toggle').checked = theme === 'dark';
-            document.getElementById('theme-icon').className = theme === 'dark' ? 'fas fa-moon' : 'fas fa-sun';
-        }
-
-        function atualizarTemaGrafico(chart) {
-            const theme = document.body.getAttribute('data-theme');
-            const textColor = theme === 'dark' ? '#e2e8f0' : '#2d3748';
+            // Impostos
+            custos.impostos = [
+                { id: Date.now() + 13, nome: 'Imposto CNPJ', valor: 6, tipo: 'percentual', ativo: true },
+                { id: Date.now() + 14, nome: 'Checkout Yampi', valor: 2.5, tipo: 'percentual', ativo: true }
+            ];
             
-            chart.options.plugins.legend.labels.color = textColor;
-            if (chart.options.scales) {
-                if (chart.options.scales.x) {
-                    chart.options.scales.x.ticks.color = textColor;
-                }
-                if (chart.options.scales.y) {
-                    chart.options.scales.y.ticks.color = textColor;
-                }
-            }
-            chart.update();
-        }
-
-        // Custos Fixos Functions
-        function abrirModalCustosFixos() {
-            switchTab('fixed-costs');
-        }
-
-        function abrirModalAdicionarCusto() {
-            document.getElementById('modal-custos').style.display = 'block';
-            // Limpar campos
-            document.getElementById('custo-nome').value = '';
-            document.getElementById('custo-valor').value = '';
-            document.getElementById('custo-moeda').value = 'BRL';
-            document.getElementById('custo-tipo').value = 'fixo';
-            document.getElementById('custo-descricao').value = '';
-        }
-
-        function fecharModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
-
-        function salvarCustoFixo() {
-            const nome = document.getElementById('custo-nome').value;
-            const valor = parseFloat(document.getElementById('custo-valor').value);
-            const moeda = document.getElementById('custo-moeda').value;
-            const tipo = document.getElementById('custo-tipo').value;
-            const descricao = document.getElementById('custo-descricao').value;
-            
-            if (!nome || !valor) {
-                mostrarNotificacao('Por favor, preencha todos os campos obrigatórios', 'error');
-                return;
-            }
-            
-            const custo = {
-                id: Date.now(),
-                nome,
-                valor,
-                moeda,
-                tipo,
-                descricao,
-                ativo: true
-            };
-            
-            custosFixos.push(custo);
             salvarDados();
-            atualizarListaCustosFixos();
-            atualizarResumoCustosFixos();
-            fecharModal('modal-custos');
-            mostrarNotificacao('Custo fixo adicionado com sucesso!', 'success');
         }
 
-        function removerCustoFixo(id) {
-            if (confirm('Tem certeza que deseja remover este custo fixo?')) {
-                custosFixos = custosFixos.filter(c => c.id !== id);
-                salvarDados();
-                atualizarListaCustosFixos();
-                atualizarResumoCustosFixos();
-                mostrarNotificacao('Custo fixo removido!', 'success');
-            }
+        function atualizarInterface() {
+            atualizarListaCustos();
+            atualizarStats();
+            atualizarListaOrcamentos();
         }
 
-        function toggleCustoFixo(id) {
-            const custo = custosFixos.find(c => c.id === id);
-            if (custo) {
-                custo.ativo = !custo.ativo;
-                salvarDados();
-                atualizarListaCustosFixos();
-                atualizarResumoCustosFixos();
-            }
-        }
-
-        function atualizarListaCustosFixos() {
-            const container = document.getElementById('lista-custos-fixos');
+        function atualizarListaCustos() {
+            // Empresa Fixos
+            const containerEmpresaFixos = document.getElementById('custos-empresa-fixos');
+            let totalEmpresaFixos = 0;
             
-            if (custosFixos.length === 0) {
-                container.innerHTML = '<p style="text-align: center; color: var(--gray);">Nenhum custo fixo cadastrado.</p>';
-                return;
-            }
-            
-            let html = '<div class="custos-fixos-list">';
-            
-            custosFixos.forEach(custo => {
-                const valorFormatado = custo.tipo === 'percentual' 
-                    ? `${custo.valor}%` 
-                    : formatarMoeda(custo.valor, custo.moeda);
-                
+            let html = '';
+            custos.empresaFixos.forEach(custo => {
+                if (custo.ativo) totalEmpresaFixos += custo.valor;
                 html += `
-                    <div class="custo-fixo-item ${!custo.ativo ? 'opacity-50' : ''}">
-                        <div>
-                            <div class="custo-fixo-nome">${custo.nome}</div>
-                            ${custo.descricao ? `<div style="font-size: 0.875rem; color: var(--gray);">${custo.descricao}</div>` : ''}
-                        </div>
-                        <div class="custo-fixo-valor">${valorFormatado}</div>
-                        <div>
-                            <span class="custo-fixo-tipo">${custo.tipo}</span>
-                        </div>
-                        <div style="display: flex; gap: 0.5rem;">
-                            <button class="btn btn-sm ${custo.ativo ? 'btn-success' : 'btn-secondary'}" 
-                                    onclick="toggleCustoFixo(${custo.id})" title="${custo.ativo ? 'Desativar' : 'Ativar'}">
+                    <div class="custos-item">
+                        <div class="custos-item-nome">
+                            <span class="custos-toggle ${custo.ativo ? '' : 'inactive'}" onclick="toggleCusto('empresaFixos', ${custo.id})">
                                 <i class="fas fa-${custo.ativo ? 'check' : 'times'}"></i>
-                            </button>
-                            <button class="btn btn-sm btn-danger" onclick="removerCustoFixo(${custo.id})">
-                                <i class="fas fa-trash"></i>
-                            </button>
+                            </span>
+                            ${custo.nome}
+                        </div>
+                        <div class="custos-item-valor">
+                            ${formatarMoeda(custo.valor)}
                         </div>
                     </div>
                 `;
             });
+            containerEmpresaFixos.innerHTML = html;
+            document.getElementById('total-empresa-fixos').textContent = formatarMoeda(totalEmpresaFixos);
             
-            html += '</div>';
-            container.innerHTML = html;
-        }
-
-        function atualizarResumoCustosFixos() {
-            const cotacaoDolar = parseFloat(document.getElementById('cotacaoDolar').value) || 5.0;
-            let totalCustos = 0;
+            // Pessoais
+            const containerPessoais = document.getElementById('custos-pessoais');
+            let totalPessoais = 0;
             
-            custosFixos.filter(c => c.ativo).forEach(custo => {
-                if (custo.tipo === 'fixo') {
-                    if (custo.moeda === 'USD') {
-                        totalCustos += custo.valor * cotacaoDolar;
-                    } else {
-                        totalCustos += custo.valor;
-                    }
-                }
+            html = '';
+            custos.pessoais.forEach(custo => {
+                if (custo.ativo) totalPessoais += custo.valor;
+                html += `
+                    <div class="custos-item">
+                        <div class="custos-item-nome">
+                            <span class="custos-toggle ${custo.ativo ? '' : 'inactive'}" onclick="toggleCusto('pessoais', ${custo.id})">
+                                <i class="fas fa-${custo.ativo ? 'check' : 'times'}"></i>
+                            </span>
+                            ${custo.nome}
+                        </div>
+                        <div class="custos-item-valor">
+                            ${formatarMoeda(custo.valor)}
+                        </div>
+                    </div>
+                `;
             });
+            containerPessoais.innerHTML = html;
+            document.getElementById('total-pessoais').textContent = formatarMoeda(totalPessoais);
             
-            document.getElementById('total-custos-fixos').textContent = formatarMoeda(totalCustos);
-        }
-
-        function calcularCustoFixoProporcional() {
-            const vendasEsperadas = parseInt(document.getElementById('vendas-esperadas').value) || 100;
-            const cotacaoDolar = parseFloat(document.getElementById('cotacaoDolar').value) || 5.0;
-            const custoBase = parseFloat(document.getElementById('custoDolar').value) * cotacaoDolar;
-            
-            let custoFixoTotal = 0;
-            let percentualTotal = 0;
-            
-            custosFixos.filter(c => c.ativo).forEach(custo => {
-                if (custo.tipo === 'fixo') {
-                    if (custo.moeda === 'USD') {
-                        custoFixoTotal += custo.valor * cotacaoDolar;
-                    } else {
-                        custoFixoTotal += custo.valor;
-                    }
-                } else if (custo.tipo === 'percentual') {
-                    percentualTotal += custo.valor;
-                }
+            // Pagamento
+            const containerPagamento = document.getElementById('custos-pagamento');
+            html = '';
+            custos.pagamento.forEach(taxa => {
+                html += `
+                    <div class="custos-item">
+                        <div class="custos-item-nome">
+                            <span class="custos-toggle ${taxa.ativo ? '' : 'inactive'}" onclick="toggleCusto('pagamento', ${taxa.id})">
+                                <i class="fas fa-${taxa.ativo ? 'check' : 'times'}"></i>
+                            </span>
+                            ${taxa.nome}
+                        </div>
+                        <div class="custos-item-valor">
+                            ${taxa.taxaFixa > 0 ? `R$ ${taxa.taxaFixa}` : ''} 
+                            ${taxa.taxaPercentual > 0 ? `${taxa.taxaPercentual}%` : ''}
+                        </div>
+                    </div>
+                `;
             });
+            containerPagamento.innerHTML = html;
             
-            // Custo fixo proporcional por unidade
-            const custoFixoPorUnidade = custoFixoTotal / vendasEsperadas;
+            // Impostos
+            const containerImpostos = document.getElementById('custos-impostos');
+            let totalImpostos = 0;
             
-            // Adicionar percentuais
-            const custoComPercentuais = custoBase * (1 + percentualTotal / 100);
-            
-            return {
-                fixoPorUnidade: custoFixoPorUnidade,
-                percentualTotal: percentualTotal,
-                totalMensal: custoFixoTotal
-            };
+            html = '';
+            custos.impostos.forEach(imposto => {
+                if (imposto.ativo && imposto.tipo === 'percentual') totalImpostos += imposto.valor;
+                html += `
+                    <div class="custos-item">
+                        <div class="custos-item-nome">
+                            <span class="custos-toggle ${imposto.ativo ? '' : 'inactive'}" onclick="toggleCusto('impostos', ${imposto.id})">
+                                <i class="fas fa-${imposto.ativo ? 'check' : 'times'}"></i>
+                            </span>
+                            ${imposto.nome}
+                        </div>
+                        <div class="custos-item-valor">
+                            ${imposto.tipo === 'percentual' ? imposto.valor + '%' : formatarMoeda(imposto.valor)}
+                        </div>
+                    </div>
+                `;
+            });
+            containerImpostos.innerHTML = html;
+            document.getElementById('total-impostos').textContent = totalImpostos.toFixed(1) + '%';
         }
 
-        // Cálculo Principal
+        function atualizarStats() {
+            // Calcular totais
+            let totalEmpresa = 0;
+            let totalPessoais = 0;
+            
+            custos.empresaFixos.filter(c => c.ativo).forEach(c => totalEmpresa += c.valor);
+            custos.pessoais.filter(c => c.ativo).forEach(c => totalPessoais += c.valor);
+            
+            const totalMensal = totalEmpresa + totalPessoais;
+            const pontoEquilibrio = totalMensal * 1.3; // 30% margem média
+            
+            // Atualizar interface
+            document.getElementById('stat-custos-empresa').textContent = formatarMoeda(totalEmpresa);
+            document.getElementById('stat-custos-pessoais').textContent = formatarMoeda(totalPessoais);
+            document.getElementById('stat-ponto-equilibrio').textContent = formatarMoeda(pontoEquilibrio);
+            document.getElementById('stat-orcamentos').textContent = orcamentos.length;
+            
+            // Atualizar header
+            document.getElementById('custos-mensais-header').textContent = formatarMoeda(totalMensal);
+            document.getElementById('meta-faturamento-header').textContent = formatarMoeda(pontoEquilibrio);
+        }
+
         function calcularPreco() {
             // Obter valores
             const nomeProduto = document.getElementById('nomeProduto').value;
-            const custoDolar = parseFloat(document.getElementById('custoDolar').value);
-            const cotacaoDolar = parseFloat(document.getElementById('cotacaoDolar').value);
+            const custoProduto = parseFloat(document.getElementById('custoProduto').value);
             const margemLucro = parseFloat(document.getElementById('margemLucro').value);
             const quantidade = parseInt(document.getElementById('quantidade').value);
-            const metodoPagamento = document.getElementById('metodoPagamento').value;
-            const taxaYampi = parseFloat(document.getElementById('taxaYampi').value) / 100;
-            const taxaImposto = parseFloat(document.getElementById('taxaImposto').value) / 100;
             
-            // Validações
-            if (!nomeProduto || !custoDolar || !cotacaoDolar || !margemLucro) {
-                mostrarNotificacao('Por favor, preencha todos os campos obrigatórios', 'error');
-                return;
-            }
+            // Calcular custos operacionais (distribuição proporcional)
+            const custosTotaisMensais = calcularCustosTotaisMensais();
+            const custoOperacionalPorProduto = custosTotaisMensais / 100; // Assumindo média de 100 produtos/mês
             
-            // Cálculos
-            const custoReais = custoDolar * cotacaoDolar;
+            // Calcular taxas do método de pagamento
+            const taxasPagamento = calcularTaxasPagamento(metodoPagamentoSelecionado, custoProduto);
             
-            // Custos fixos proporcionais
-            const custosFixosCalc = calcularCustoFixoProporcional();
-            const custoComFixos = custoReais + custosFixosCalc.fixoPorUnidade;
+            // Calcular impostos
+            const impostos = calcularImpostos();
             
-            // Taxa de pagamento
-            const taxaPagamento = metodoPagamento === 'pix' ? 0.0079 : 0.1435;
+            // Cálculo do preço
+            const custoTotal = custoProduto + custoOperacionalPorProduto;
+            const precoComMargem = custoTotal * (1 + margemLucro / 100);
             
-            // Todas as taxas
-            const totalTaxas = taxaPagamento + taxaYampi + taxaImposto + (custosFixosCalc.percentualTotal / 100);
+            // Aplicar taxas e impostos
+            const totalTaxasPercentuais = taxasPagamento.percentual + impostos.percentual;
+            const precoFinal = (precoComMargem + taxasPagamento.fixo) / (1 - totalTaxasPercentuais / 100);
             
-            // Preço com margem
-            const precoComMargem = custoComFixos * (1 + margemLucro / 100);
+            // Calcular lucro líquido
+            const valorTaxas = (precoFinal * totalTaxasPercentuais / 100) + taxasPagamento.fixo;
+            const lucroLiquido = precoFinal - custoTotal - valorTaxas;
+            const margemReal = (lucroLiquido / precoFinal) * 100;
             
-            // Preço final considerando taxas
-            const precoFinal = precoComMargem / (1 - totalTaxas);
-            
-            // Valores das taxas
-            const valorTaxaPagamento = precoFinal * taxaPagamento;
-            const valorYampi = precoFinal * taxaYampi;
-            const valorImposto = precoFinal * taxaImposto;
-            const valorTaxasPercentuais = precoFinal * (custosFixosCalc.percentualTotal / 100);
-            
-            // Lucro real
-            const lucroReal = precoFinal - custoComFixos - valorTaxaPagamento - valorYampi - valorImposto - valorTaxasPercentuais;
+            // Calcular break-even
+            const unidadesEquilibrio = Math.ceil(custosTotaisMensais / lucroLiquido);
+            const faturamentoEquilibrio = custosTotaisMensais * (precoFinal / lucroLiquido);
             
             // Atualizar interface
-            document.getElementById('res-custo-reais').textContent = formatarMoeda(custoReais);
-            document.getElementById('res-custos-fixos').textContent = formatarMoeda(custosFixosCalc.fixoPorUnidade);
-            document.getElementById('res-taxas').textContent = formatarMoeda(valorTaxaPagamento + valorYampi + valorImposto + valorTaxasPercentuais);
-            document.getElementById('res-lucro').textContent = formatarMoeda(lucroReal);
+            document.getElementById('res-custo-base').textContent = formatarMoeda(custoProduto);
+            document.getElementById('res-custos-operacionais').textContent = formatarMoeda(custoOperacionalPorProduto);
+            document.getElementById('res-taxas').textContent = formatarMoeda(valorTaxas);
+            document.getElementById('res-lucro').textContent = formatarMoeda(lucroLiquido);
             document.getElementById('res-preco-final').textContent = formatarMoeda(precoFinal);
             document.getElementById('res-quantidade').textContent = quantidade;
             document.getElementById('res-preco-total').textContent = formatarMoeda(precoFinal * quantidade);
+            
+            document.getElementById('res-unidades-equilibrio').textContent = unidadesEquilibrio;
+            document.getElementById('res-faturamento-equilibrio').textContent = formatarMoeda(faturamentoEquilibrio);
+            document.getElementById('res-margem-real').textContent = margemReal.toFixed(1) + '%';
             
             // Mostrar resultado
             document.getElementById('resultado').style.display = 'block';
             
             // Atualizar gráfico
-            atualizarGraficoDistribuicao({
-                custoBase: custoReais,
-                custosFixos: custosFixosCalc.fixoPorUnidade,
-                taxaPagamento: valorTaxaPagamento,
-                taxaYampi: valorYampi,
-                taxaImposto: valorImposto,
-                taxasPercentuais: valorTaxasPercentuais,
-                lucro: lucroReal
+            atualizarGrafico({
+                custoProduto,
+                custoOperacionalPorProduto,
+                valorTaxas,
+                lucroLiquido
             });
             
             // Armazenar cálculo atual
             window.calculoAtual = {
                 nomeProduto,
-                dataCotacao: document.getElementById('dataCotacao').value,
-                custoDolar,
-                cotacaoDolar,
-                custoReais,
+                custoProduto,
                 margemLucro,
                 quantidade,
-                metodoPagamento,
-                custosFixos: custosFixosCalc,
+                metodoPagamento: metodoPagamentoSelecionado,
                 precoFinal,
-                lucroReal,
+                lucroLiquido,
+                margemReal,
+                unidadesEquilibrio,
                 observacoes: document.getElementById('observacoes').value
             };
         }
 
-        function atualizarGraficoDistribuicao(dados) {
-            const ctx = document.getElementById('graficoDistribuicao').getContext('2d');
+        function calcularCustosTotaisMensais() {
+            let total = 0;
+            
+            custos.empresaFixos.filter(c => c.ativo).forEach(c => total += c.valor);
+            custos.pessoais.filter(c => c.ativo).forEach(c => total += c.valor);
+            
+            return total;
+        }
+
+        function calcularTaxasPagamento(metodo, valor) {
+            let taxa = custos.pagamento.find(t => t.metodo === metodo && t.ativo);
+            
+            if (!taxa) {
+                // Fallback para cartão padrão
+                taxa = custos.pagamento.find(t => t.metodo === 'cartao' && t.ativo);
+            }
+            
+            return {
+                fixo: taxa ? taxa.taxaFixa : 0,
+                percentual: taxa ? taxa.taxaPercentual : 0
+            };
+        }
+
+        function calcularImpostos() {
+            let percentualTotal = 0;
+            let fixoTotal = 0;
+            
+            custos.impostos.filter(i => i.ativo).forEach(imposto => {
+                if (imposto.tipo === 'percentual') {
+                    percentualTotal += imposto.valor;
+                } else {
+                    fixoTotal += imposto.valor;
+                }
+            });
+            
+            return { percentual: percentualTotal, fixo: fixoTotal };
+        }
+
+        function atualizarGrafico(dados) {
+            const ctx = document.getElementById('grafico-distribuicao').getContext('2d');
             
             if (chartDistribuicao) {
                 chartDistribuicao.destroy();
@@ -1513,25 +1463,19 @@
             chartDistribuicao = new Chart(ctx, {
                 type: 'doughnut',
                 data: {
-                    labels: ['Custo Base', 'Custos Fixos', 'Taxa Pagamento', 'Yampi', 'Imposto', 'Taxas %', 'Lucro'],
+                    labels: ['Custo Produto', 'Custos Operacionais', 'Taxas e Impostos', 'Lucro Líquido'],
                     datasets: [{
                         data: [
-                            dados.custoBase,
-                            dados.custosFixos,
-                            dados.taxaPagamento,
-                            dados.taxaYampi,
-                            dados.taxaImposto,
-                            dados.taxasPercentuais,
-                            dados.lucro
+                            dados.custoProduto,
+                            dados.custoOperacionalPorProduto,
+                            dados.valorTaxas,
+                            dados.lucroLiquido
                         ],
                         backgroundColor: [
-                            '#0d838c',
-                            '#0fa3af',
-                            '#4cc9f0',
-                            '#7209b7',
-                            '#f72585',
-                            '#ffd60a',
-                            '#4cc9f0'
+                            '#94a3b8',
+                            '#f59e0b',
+                            '#ef4444',
+                            '#10b981'
                         ]
                     }]
                 },
@@ -1543,129 +1487,101 @@
                             position: 'bottom',
                             labels: {
                                 padding: 15,
-                                font: {
-                                    size: 12
-                                }
-                            }
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label || '';
-                                    const value = context.raw || 0;
-                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
-                                    const percentage = ((value / total) * 100).toFixed(1);
-                                    return `${label}: ${formatarMoeda(value)} (${percentage}%)`;
-                                }
+                                font: { size: 12 }
                             }
                         }
                     }
                 }
             });
-            
-            // Aplicar tema
-            atualizarTemaGrafico(chartDistribuicao);
         }
 
-        // Cotação Functions
-        async function atualizarCotacao() {
-            const btn = event ? event.target : document.querySelector('[onclick="atualizarCotacao()"]');
-            const originalContent = btn.innerHTML;
-            btn.innerHTML = '<span class="spinner"></span>';
-            btn.disabled = true;
+        function selecionarPagamento(metodo) {
+            metodoPagamentoSelecionado = metodo;
+            document.getElementById('metodoPagamento').value = metodo;
             
-            try {
-                const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
-                const data = await response.json();
-                
-                if (data && data.rates && data.rates.BRL) {
-                    const cotacao = data.rates.BRL;
-                    document.getElementById('cotacaoDolar').value = cotacao.toFixed(2);
-                    
-                    // Salvar no histórico
-                    salvarCotacaoHistorico(cotacao);
-                    
-                    // Atualizar custos fixos
-                    atualizarResumoCustosFixos();
-                    
-                    mostrarNotificacao('Cotação atualizada com sucesso!', 'success');
-                }
-            } catch (error) {
-                console.error('Erro ao buscar cotação:', error);
-                mostrarNotificacao('Erro ao atualizar cotação. Usando valor padrão.', 'error');
-                document.getElementById('cotacaoDolar').value = '5.00';
-            } finally {
-                btn.innerHTML = originalContent;
-                btn.disabled = false;
+            // Atualizar visual
+            document.querySelectorAll('.quick-action').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.closest('.quick-action').classList.add('active');
+        }
+
+        function toggleCusto(categoria, id) {
+            const lista = categoria === 'empresaFixos' ? custos.empresaFixos :
+                         categoria === 'pessoais' ? custos.pessoais :
+                         categoria === 'pagamento' ? custos.pagamento :
+                         custos.impostos;
+            
+            const custo = lista.find(c => c.id === id);
+            if (custo) {
+                custo.ativo = !custo.ativo;
+                salvarDados();
+                atualizarInterface();
             }
         }
 
-        function salvarCotacaoHistorico(cotacao) {
-            cotacaoHistorico.push({
-                data: new Date().toISOString(),
-                valor: cotacao
-            });
+        function abrirModalCusto() {
+            document.getElementById('modal-custo').style.display = 'block';
+            // Limpar campos
+            document.getElementById('custo-nome').value = '';
+            document.getElementById('custo-valor').value = '';
+            document.getElementById('custo-categoria').value = 'empresa-fixo';
+            atualizarFormCusto();
+        }
+
+        function atualizarFormCusto() {
+            const categoria = document.getElementById('custo-categoria').value;
+            const valoresContainer = document.getElementById('valores-container');
+            const pagamentoContainer = document.getElementById('pagamento-container');
             
-            // Manter apenas últimos 30 registros
-            if (cotacaoHistorico.length > 30) {
-                cotacaoHistorico = cotacaoHistorico.slice(-30);
+            if (categoria === 'pagamento') {
+                valoresContainer.style.display = 'none';
+                pagamentoContainer.style.display = 'block';
+            } else {
+                valoresContainer.style.display = 'grid';
+                pagamentoContainer.style.display = 'none';
+            }
+        }
+
+        function salvarCusto() {
+            const categoria = document.getElementById('custo-categoria').value;
+            const nome = document.getElementById('custo-nome').value;
+            
+            if (!nome) {
+                mostrarNotificacao('Preencha o nome do custo', 'error');
+                return;
+            }
+            
+            const novoCusto = {
+                id: Date.now(),
+                nome: nome,
+                ativo: true
+            };
+            
+            if (categoria === 'pagamento') {
+                novoCusto.metodo = nome.toLowerCase().replace(' ', '_');
+                novoCusto.taxaFixa = parseFloat(document.getElementById('custo-taxa-fixa').value) || 0;
+                novoCusto.taxaPercentual = parseFloat(document.getElementById('custo-taxa-percentual').value) || 0;
+                custos.pagamento.push(novoCusto);
+            } else {
+                novoCusto.valor = parseFloat(document.getElementById('custo-valor').value) || 0;
+                novoCusto.tipo = document.getElementById('custo-tipo').value;
+                
+                if (categoria === 'empresa-fixo') {
+                    custos.empresaFixos.push(novoCusto);
+                } else if (categoria === 'pessoal') {
+                    custos.pessoais.push(novoCusto);
+                } else if (categoria === 'imposto') {
+                    custos.impostos.push(novoCusto);
+                }
             }
             
             salvarDados();
+            atualizarInterface();
+            fecharModal('modal-custo');
+            mostrarNotificacao('Custo adicionado com sucesso!');
         }
 
-        function atualizarGraficoCotacao() {
-            const ctx = document.getElementById('cotacaoChart').getContext('2d');
-            
-            if (chartCotacao) {
-                chartCotacao.destroy();
-            }
-            
-            const labels = cotacaoHistorico.map(item => {
-                const data = new Date(item.data);
-                return `${data.getDate()}/${data.getMonth() + 1}`;
-            });
-            
-            const valores = cotacaoHistorico.map(item => item.valor);
-            
-            chartCotacao = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Cotação do Dólar (R$)',
-                        data: valores,
-                        borderColor: '#0d838c',
-                        backgroundColor: 'rgba(13, 131, 140, 0.1)',
-                        tension: 0.3,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: false,
-                            ticks: {
-                                callback: function(value) {
-                                    return 'R$ ' + value.toFixed(2);
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            
-            atualizarTemaGrafico(chartCotacao);
-        }
-
-        // Orçamentos Functions
         function salvarOrcamento() {
             if (!window.calculoAtual) {
                 mostrarNotificacao('Calcule o preço primeiro!', 'error');
@@ -1675,44 +1591,43 @@
             const orcamento = {
                 ...window.calculoAtual,
                 id: Date.now(),
-                dataCriacao: new Date().toISOString()
+                data: new Date().toISOString()
             };
             
-            orcamentosSalvos.push(orcamento);
+            orcamentos.unshift(orcamento);
             salvarDados();
-            atualizarOrcamentosSalvos();
-            atualizarDashboard();
+            atualizarListaOrcamentos();
+            atualizarStats();
             
-            mostrarNotificacao('Orçamento salvo com sucesso!', 'success');
+            mostrarNotificacao('Orçamento salvo com sucesso!');
             
             // Limpar formulário
             document.getElementById('calculator-form').reset();
-            document.getElementById('dataCotacao').valueAsDate = new Date();
             document.getElementById('resultado').style.display = 'none';
         }
 
-        function atualizarOrcamentosSalvos() {
-            const container = document.getElementById('orcamentos-salvos');
+        function atualizarListaOrcamentos() {
+            const container = document.getElementById('lista-orcamentos');
             
-            if (orcamentosSalvos.length === 0) {
+            if (orcamentos.length === 0) {
                 container.innerHTML = '<p style="text-align: center; color: var(--gray);">Nenhum orçamento salvo ainda.</p>';
                 return;
             }
             
             let html = '<div class="table-responsive"><table class="table"><thead><tr>';
-            html += '<th>Produto</th><th>Data</th><th>Custo</th><th>Preço</th><th>Lucro</th><th>Ações</th>';
+            html += '<th>Produto</th><th>Custo</th><th>Preço</th><th>Lucro</th><th>Margem</th><th>Ações</th>';
             html += '</tr></thead><tbody>';
             
-            orcamentosSalvos.slice().reverse().forEach(orcamento => {
+            orcamentos.slice(0, 10).forEach(orc => {
                 html += `
                     <tr>
-                        <td>${orcamento.nomeProduto}</td>
-                        <td>${new Date(orcamento.dataCotacao).toLocaleDateString('pt-BR')}</td>
-                        <td>${formatarMoeda(orcamento.custoReais)}</td>
-                        <td>${formatarMoeda(orcamento.precoFinal)}</td>
-                        <td>${formatarMoeda(orcamento.lucroReal)}</td>
+                        <td>${orc.nomeProduto}</td>
+                        <td>${formatarMoeda(orc.custoProduto)}</td>
+                        <td>${formatarMoeda(orc.precoFinal)}</td>
+                        <td>${formatarMoeda(orc.lucroLiquido)}</td>
+                        <td>${orc.margemReal.toFixed(1)}%</td>
                         <td>
-                            <button class="btn btn-sm btn-danger" onclick="excluirOrcamento(${orcamento.id})">
+                            <button class="btn btn-sm btn-danger" onclick="excluirOrcamento(${orc.id})">
                                 <i class="fas fa-trash"></i>
                             </button>
                         </td>
@@ -1725,33 +1640,28 @@
         }
 
         function excluirOrcamento(id) {
-            if (confirm('Tem certeza que deseja excluir este orçamento?')) {
-                orcamentosSalvos = orcamentosSalvos.filter(o => o.id !== id);
+            if (confirm('Excluir este orçamento?')) {
+                orcamentos = orcamentos.filter(o => o.id !== id);
                 salvarDados();
-                atualizarOrcamentosSalvos();
-                atualizarDashboard();
-                mostrarNotificacao('Orçamento excluído!', 'success');
+                atualizarListaOrcamentos();
+                atualizarStats();
+                mostrarNotificacao('Orçamento excluído!');
             }
         }
 
-        function compartilharOrcamento() {
-            if (!window.calculoAtual) return;
-            
-            const texto = `
-Orçamento: ${window.calculoAtual.nomeProduto}
-Preço Unitário: ${formatarMoeda(window.calculoAtual.precoFinal)}
-Quantidade: ${window.calculoAtual.quantidade}
-Total: ${formatarMoeda(window.calculoAtual.precoFinal * window.calculoAtual.quantidade)}
-            `.trim();
-            
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Orçamento LED LINE',
-                    text: texto
-                });
-            } else {
-                navigator.clipboard.writeText(texto);
-                mostrarNotificacao('Orçamento copiado para a área de transferência!', 'success');
+        async function atualizarCotacao() {
+            try {
+                const response = await fetch('https://api.exchangerate-api.com/v4/latest/USD');
+                const data = await response.json();
+                
+                if (data && data.rates && data.rates.BRL) {
+                    cotacaoDolar = data.rates.BRL;
+                    document.getElementById('cotacao-header').textContent = formatarMoeda(cotacaoDolar);
+                    mostrarNotificacao('Cotação atualizada!');
+                }
+            } catch (error) {
+                console.error('Erro ao atualizar cotação:', error);
+                document.getElementById('cotacao-header').textContent = formatarMoeda(5.00);
             }
         }
 
@@ -1771,7 +1681,7 @@ Total: ${formatarMoeda(window.calculoAtual.precoFinal * window.calculoAtual.quan
             
             doc.setFontSize(14);
             doc.setTextColor(0);
-            doc.text('Orçamento', 105, 30, { align: 'center' });
+            doc.text('Orçamento Profissional', 105, 30, { align: 'center' });
             
             // Content
             doc.setFontSize(12);
@@ -1779,198 +1689,117 @@ Total: ${formatarMoeda(window.calculoAtual.precoFinal * window.calculoAtual.quan
             
             doc.text(`Produto: ${window.calculoAtual.nomeProduto}`, 20, y);
             y += 10;
-            doc.text(`Data: ${new Date(window.calculoAtual.dataCotacao).toLocaleDateString('pt-BR')}`, 20, y);
-            y += 10;
-            doc.text(`Quantidade: ${window.calculoAtual.quantidade} unidades`, 20, y);
-            y += 20;
+            doc.text(`Data: ${new Date().toLocaleDateString('pt-BR')}`, 20, y);
+            y += 15;
             
-            doc.text(`Custo em Dólar: ${formatarMoeda(window.calculoAtual.custoDolar, 'USD')}`, 20, y);
+            doc.text(`Custo: ${formatarMoeda(window.calculoAtual.custoProduto)}`, 20, y);
             y += 10;
-            doc.text(`Cotação: ${formatarMoeda(window.calculoAtual.cotacaoDolar)}`, 20, y);
+            doc.text(`Margem: ${window.calculoAtual.margemLucro}%`, 20, y);
             y += 10;
-            doc.text(`Custo em Reais: ${formatarMoeda(window.calculoAtual.custoReais)}`, 20, y);
-            y += 20;
+            doc.text(`Quantidade: ${window.calculoAtual.quantidade}`, 20, y);
+            y += 15;
             
             doc.setFontSize(14);
             doc.setTextColor(13, 131, 140);
             doc.text(`Preço Unitário: ${formatarMoeda(window.calculoAtual.precoFinal)}`, 20, y);
             y += 10;
             doc.text(`Preço Total: ${formatarMoeda(window.calculoAtual.precoFinal * window.calculoAtual.quantidade)}`, 20, y);
+            y += 15;
             
-            // Save
-            doc.save(`orcamento_${window.calculoAtual.nomeProduto.replace(/\s+/g, '_')}.pdf`);
-            mostrarNotificacao('PDF exportado com sucesso!', 'success');
+            doc.setFontSize(10);
+            doc.setTextColor(100);
+            doc.text(`Unidades para equilibrio: ${window.calculoAtual.unidadesEquilibrio}`, 20, y);
+            
+            doc.save(`orcamento_${window.calculoAtual.nomeProduto}.pdf`);
+            mostrarNotificacao('PDF exportado!');
         }
 
         function exportarCSV() {
-            if (orcamentosSalvos.length === 0) {
+            if (orcamentos.length === 0) {
                 mostrarNotificacao('Não há orçamentos para exportar', 'error');
                 return;
             }
             
-            let csv = 'Produto,Data,Custo Dólar,Cotação,Custo Reais,Margem,Preço Final,Quantidade,Lucro\n';
+            let csv = 'Produto,Custo,Preço,Lucro,Margem,Quantidade\n';
             
-            orcamentosSalvos.forEach(o => {
-                csv += `"${o.nomeProduto}",`;
-                csv += `"${new Date(o.dataCotacao).toLocaleDateString('pt-BR')}",`;
-                csv += `"${o.custoDolar}",`;
-                csv += `"${o.cotacaoDolar}",`;
-                csv += `"${o.custoReais.toFixed(2)}",`;
-                csv += `"${o.margemLucro}%",`;
-                csv += `"${o.precoFinal.toFixed(2)}",`;
-                csv += `"${o.quantidade}",`;
-                csv += `"${o.lucroReal.toFixed(2)}"\n`;
+            orcamentos.forEach(o => {
+                csv += `"${o.nomeProduto}",${o.custoProduto},${o.precoFinal},${o.lucroLiquido},${o.margemReal},${o.quantidade}\n`;
             });
             
-            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const blob = new Blob([csv], { type: 'text/csv' });
             const link = document.createElement('a');
             link.href = URL.createObjectURL(blob);
             link.download = 'orcamentos_led_line.csv';
             link.click();
             
-            mostrarNotificacao('CSV exportado com sucesso!', 'success');
+            mostrarNotificacao('CSV exportado!');
         }
 
-        function limparTodos() {
-            if (confirm('Tem certeza que deseja excluir TODOS os orçamentos?')) {
-                orcamentosSalvos = [];
-                salvarDados();
-                atualizarOrcamentosSalvos();
-                atualizarDashboard();
-                mostrarNotificacao('Todos os orçamentos foram excluídos!', 'success');
-            }
+        function fecharModal(id) {
+            document.getElementById(id).style.display = 'none';
         }
 
-        // Dashboard Functions
-        function atualizarDashboard() {
-            // Totais
-            const totalOrcamentos = orcamentosSalvos.length;
-            const valorTotal = orcamentosSalvos.reduce((sum, o) => sum + (o.precoFinal * o.quantidade), 0);
-            const ticketMedio = totalOrcamentos > 0 ? valorTotal / totalOrcamentos : 0;
-            const margemMedia = totalOrcamentos > 0 
-                ? orcamentosSalvos.reduce((sum, o) => sum + o.margemLucro, 0) / totalOrcamentos 
-                : 0;
-            
-            document.getElementById('dash-total-orcamentos').textContent = totalOrcamentos;
-            document.getElementById('dash-valor-total').textContent = formatarMoeda(valorTotal);
-            document.getElementById('dash-ticket-medio').textContent = formatarMoeda(ticketMedio);
-            document.getElementById('dash-margem-media').textContent = margemMedia.toFixed(1) + '%';
-            
-            // Gráfico de vendas
-            atualizarGraficoVendas();
+        function toggleCategoria(categoria) {
+            // Implementar toggle visual se necessário
         }
 
-        function atualizarGraficoVendas() {
-            const ctx = document.getElementById('vendas-chart');
-            if (!ctx) return;
-            
-            if (chartVendas) {
-                chartVendas.destroy();
-            }
-            
-            // Agrupar por mês
-            const vendaPorMes = {};
-            orcamentosSalvos.forEach(o => {
-                const data = new Date(o.dataCotacao);
-                const mes = `${data.getMonth() + 1}/${data.getFullYear()}`;
-                
-                if (!vendaPorMes[mes]) {
-                    vendaPorMes[mes] = 0;
-                }
-                vendaPorMes[mes] += o.precoFinal * o.quantidade;
-            });
-            
-            const labels = Object.keys(vendaPorMes);
-            const valores = Object.values(vendaPorMes);
-            
-            chartVendas = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Vendas por Mês',
-                        data: valores,
-                        backgroundColor: '#0d838c',
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return formatarMoeda(value);
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            
-            atualizarTemaGrafico(chartVendas);
+        function toggleTheme() {
+            const currentTheme = document.body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            document.body.setAttribute('data-theme', newTheme);
+            document.getElementById('theme-icon').className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            localStorage.setItem('theme', newTheme);
         }
 
-        // Storage Functions
-        function carregarDados() {
-            const dados = localStorage.getItem('ledLineCalculadora');
-            if (dados) {
-                const parsed = JSON.parse(dados);
-                custosFixos = parsed.custosFixos || [];
-                orcamentosSalvos = parsed.orcamentosSalvos || [];
-                cotacaoHistorico = parsed.cotacaoHistorico || [];
-            }
-        }
-
-        function salvarDados() {
-            const dados = {
-                custosFixos,
-                orcamentosSalvos,
-                cotacaoHistorico
-            };
-            localStorage.setItem('ledLineCalculadora', JSON.stringify(dados));
-        }
-
-        // Utility Functions
-        function formatarMoeda(valor, moeda = 'BRL') {
-            return new Intl.NumberFormat('pt-BR', {
-                style: 'currency',
-                currency: moeda
-            }).format(valor);
+        function verificarTema() {
+            const theme = localStorage.getItem('theme') || 'light';
+            document.body.setAttribute('data-theme', theme);
+            document.getElementById('theme-icon').className = theme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
         }
 
         function mostrarNotificacao(mensagem, tipo = 'success') {
             const notification = document.getElementById('notification');
             const icon = notification.querySelector('i');
             
-            // Update icon
             icon.className = tipo === 'error' ? 'fas fa-exclamation-circle' : 
                            tipo === 'warning' ? 'fas fa-exclamation-triangle' : 
                            'fas fa-check-circle';
             
-            // Update class
             notification.className = `notification ${tipo}`;
-            
-            // Update text
             document.getElementById('notification-text').textContent = mensagem;
             
-            // Show
             notification.classList.add('show');
             
-            // Hide after 3 seconds
             setTimeout(() => {
                 notification.classList.remove('show');
             }, 3000);
         }
 
-        // Service Worker Registration
+        function formatarMoeda(valor) {
+            return new Intl.NumberFormat('pt-BR', {
+                style: 'currency',
+                currency: 'BRL'
+            }).format(valor);
+        }
+
+        function carregarDados() {
+            const dados = localStorage.getItem('ledLinePro');
+            if (dados) {
+                const parsed = JSON.parse(dados);
+                custos = parsed.custos || custos;
+                orcamentos = parsed.orcamentos || [];
+            }
+        }
+
+        function salvarDados() {
+            const dados = {
+                custos,
+                orcamentos
+            };
+            localStorage.setItem('ledLinePro', JSON.stringify(dados));
+        }
+
+        // Service Worker
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('./sw.js')
                 .then(reg => console.log('Service Worker registrado'))
