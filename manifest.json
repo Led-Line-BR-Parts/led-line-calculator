@@ -1,12 +1,12 @@
 {
-  "name": "LED LINE BR PARTS - Calculadora Avançada",
-  "short_name": "LED Calculator",
-  "description": "Sistema avançado de cálculo de preços com gestão de custos fixos para LED LINE BR PARTS",
+  "name": "LED LINE BR PARTS - Calculadora Profissional",
+  "short_name": "LED PRO",
+  "description": "Sistema profissional completo de cálculo de preços com gestão integrada de custos empresariais e pessoais",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#f5f7fa",
+  "background_color": "#f1f5f9",
   "theme_color": "#0d838c",
-  "orientation": "portrait-primary",
+  "orientation": "any",
   "scope": "./",
   "icons": [
     {
@@ -82,7 +82,7 @@
     {
       "name": "Histórico",
       "short_name": "Histórico",
-      "description": "Ver histórico de cotações",
+      "description": "Ver histórico de orçamentos",
       "url": "./index.html?tab=history",
       "icons": [
         {
@@ -97,6 +97,7 @@
   "features": [
     "Cross Platform",
     "Offline Capable",
+    "Fast",
     "Installable"
   ],
   "lang": "pt-BR",
@@ -118,6 +119,6 @@
     }
   ],
   "edge_side_panel": {
-    "preferred_width": 400
+    "preferred_width": 480
   }
 }
