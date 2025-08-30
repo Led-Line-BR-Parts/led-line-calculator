@@ -1155,6 +1155,56 @@
                     </div>
                 </div>
 
+                <!-- Calculadora de Parcelamento Independente -->
+                <div class="card" style="margin-top: 2rem;">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-credit-card"></i> Simulador de Parcelamento
+                        </h3>
+                        <span style="font-size: 0.875rem; color: var(--gray);">
+                            Mostre as opções para seu cliente
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Valor Total da Compra</label>
+                                <input type="number" id="valor-parcelamento" step="0.01" placeholder="1000.00" onkeyup="calcularParcelamentoIndependente()">
+                            </div>
+                            <div class="form-group">
+                                <label>Entrada (opcional)</label>
+                                <input type="number" id="entrada-parcelamento" step="0.01" placeholder="0.00" onkeyup="calcularParcelamentoIndependente()">
+                            </div>
+                        </div>
+                        
+                        <div id="resultado-parcelamento" style="display: none;">
+                            <div class="info-alert" style="margin-bottom: 1rem;">
+                                <div class="info-alert-title">
+                                    <i class="fas fa-info-circle"></i> Valor a Parcelar
+                                </div>
+                                <div class="info-alert-text">
+                                    <strong id="valor-financiar">R$ 0,00</strong> (após entrada de <span id="valor-entrada-info">R$ 0,00</span>)
+                                </div>
+                            </div>
+                            
+                            <div class="parcelamento-grid" id="parcelamento-independente-grid">
+                                <!-- Parcelas serão inseridas aqui -->
+                            </div>
+                            
+                            <div style="margin-top: 1rem; padding: 1rem; background: var(--hover-bg); border-radius: var(--border-radius-sm);">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 0.875rem; color: var(--gray);">
+                                        <i class="fas fa-lightbulb"></i> Dica: Ofereça 3x sem juros para aumentar conversão
+                                    </span>
+                                    <button class="btn btn-sm btn-primary" onclick="copiarTabelaParcelamento()">
+                                        <i class="fas fa-copy"></i> Copiar Tabela
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Histórico -->
                 <div class="card" style="margin-top: 2rem;">
                     <div class="card-header">
@@ -1534,8 +1584,8 @@
             // Mostrar resultado
             document.getElementById('resultado').style.display = 'block';
             
-            // Mostrar parcelamento se for cartão
-            if (metodoPagamentoSelecionado === 'cartao' || metodoPagamentoSelecionado === 'cartao_parcelado') {
+            // Mostrar parcelamento APENAS se for parcelado
+            if (metodoPagamentoSelecionado === 'cartao_parcelado') {
                 calcularParcelamento(precoFinal * quantidade);
                 document.getElementById('parcelamento-container').style.display = 'block';
             } else {
@@ -1696,6 +1746,87 @@
                 salvarDados();
                 atualizarInterface();
             }
+        }
+
+        function calcularParcelamentoIndependente() {
+            const valorTotal = parseFloat(document.getElementById('valor-parcelamento').value) || 0;
+            const entrada = parseFloat(document.getElementById('entrada-parcelamento').value) || 0;
+            
+            if (valorTotal <= 0) {
+                document.getElementById('resultado-parcelamento').style.display = 'none';
+                return;
+            }
+            
+            const valorFinanciar = valorTotal - entrada;
+            
+            // Atualizar informações
+            document.getElementById('valor-financiar').textContent = formatarMoeda(valorFinanciar);
+            document.getElementById('valor-entrada-info').textContent = formatarMoeda(entrada);
+            
+            // Calcular parcelas
+            const container = document.getElementById('parcelamento-independente-grid');
+            let html = '';
+            
+            for (let parcelas = 1; parcelas <= 12; parcelas++) {
+                const juros = JUROS_PARCELAMENTO[parcelas] / 100;
+                const valorComJuros = valorFinanciar * (1 + juros);
+                const valorParcela = valorComJuros / parcelas;
+                
+                const jurosText = parcelas === 1 ? '(Sem juros)' : `(${JUROS_PARCELAMENTO[parcelas]}% a.m.)`;
+                const economia = parcelas <= 3 ? '<span style="color: var(--success); font-weight: 600;"> ⭐ Sem juros</span>' : '';
+                
+                html += `
+                    <div class="parcelamento-item" style="${parcelas <= 3 ? 'border-color: var(--success);' : ''}">
+                        <div>
+                            <div class="parcelamento-parcelas">${parcelas}x ${parcelas === 1 ? 'à vista' : ''}</div>
+                            <div class="parcelamento-juros">${jurosText} ${economia}</div>
+                        </div>
+                        <div>
+                            <div class="parcelamento-valor">${formatarMoeda(valorParcela)}</div>
+                            <div class="parcelamento-total">Total: ${formatarMoeda(valorComJuros)}</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
+            document.getElementById('resultado-parcelamento').style.display = 'block';
+        }
+
+        function copiarTabelaParcelamento() {
+            const valorTotal = parseFloat(document.getElementById('valor-parcelamento').value) || 0;
+            const entrada = parseFloat(document.getElementById('entrada-parcelamento').value) || 0;
+            const valorFinanciar = valorTotal - entrada;
+            
+            let texto = `💳 OPÇÕES DE PARCELAMENTO - LED LINE BR PARTS\n\n`;
+            texto += `Valor Total: ${formatarMoeda(valorTotal)}\n`;
+            if (entrada > 0) {
+                texto += `Entrada: ${formatarMoeda(entrada)}\n`;
+                texto += `Valor Financiado: ${formatarMoeda(valorFinanciar)}\n`;
+            }
+            texto += `\n📋 TABELA DE PARCELAMENTO:\n\n`;
+            
+            for (let parcelas = 1; parcelas <= 12; parcelas++) {
+                const juros = JUROS_PARCELAMENTO[parcelas] / 100;
+                const valorComJuros = valorFinanciar * (1 + juros);
+                const valorParcela = valorComJuros / parcelas;
+                
+                if (parcelas <= 3) {
+                    texto += `⭐ ${parcelas}x de ${formatarMoeda(valorParcela)} SEM JUROS\n`;
+                } else {
+                    texto += `${parcelas}x de ${formatarMoeda(valorParcela)} (Total: ${formatarMoeda(valorComJuros)})\n`;
+                }
+            }
+            
+            texto += `\n✅ Aceitamos PIX, Boleto e Cartão\n`;
+            texto += `📦 Envio imediato após confirmação do pagamento`;
+            
+            // Copiar para clipboard
+            navigator.clipboard.writeText(texto).then(() => {
+                mostrarNotificacao('Tabela copiada! Cole no WhatsApp para o cliente.');
+            }).catch(() => {
+                mostrarNotificacao('Erro ao copiar. Tente novamente.', 'error');
+            });
         }
 
         function removerCusto(categoria, id) {
