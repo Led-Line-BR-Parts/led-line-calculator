@@ -259,6 +259,12 @@
             font-weight: 600;
             color: var(--primary);
         }
+
+        .custos-item-actions {
+            display: flex;
+            gap: 0.25rem;
+            align-items: center;
+        }
         
         /* Form Elements */
         .form-group {
@@ -308,6 +314,67 @@
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
+        }
+
+        /* Calculadora de Parcelamento */
+        .parcelamento-container {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(147, 51, 234, 0.05) 100%);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .parcelamento-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .parcelamento-grid {
+            display: grid;
+            gap: 0.75rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .parcelamento-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: var(--card-bg);
+            border-radius: var(--border-radius-sm);
+            border: 1px solid var(--gray-light);
+            transition: var(--transition);
+        }
+
+        .parcelamento-item:hover {
+            border-color: var(--primary);
+            box-shadow: var(--box-shadow);
+        }
+
+        .parcelamento-parcelas {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .parcelamento-valor {
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .parcelamento-juros {
+            font-size: 0.75rem;
+            color: var(--gray);
+        }
+
+        .parcelamento-total {
+            font-size: 0.8125rem;
+            color: var(--gray);
         }
         
         /* Buttons */
@@ -792,6 +859,20 @@
         .custos-toggle:hover {
             transform: scale(1.1);
         }
+
+        .btn-remove {
+            background: transparent;
+            border: none;
+            color: var(--danger);
+            cursor: pointer;
+            padding: 0.25rem;
+            font-size: 0.875rem;
+            transition: var(--transition);
+        }
+
+        .btn-remove:hover {
+            transform: scale(1.2);
+        }
         
         /* Quick Actions */
         .quick-actions {
@@ -987,6 +1068,9 @@
                                     <div class="quick-action active" onclick="selecionarPagamento('cartao')">
                                         <i class="fas fa-credit-card"></i> Cartão
                                     </div>
+                                    <div class="quick-action" onclick="selecionarPagamento('cartao_parcelado')">
+                                        <i class="fas fa-credit-card"></i> Parcelado
+                                    </div>
                                 </div>
                                 <input type="hidden" id="metodoPagamento" value="cartao">
                             </div>
@@ -1042,6 +1126,16 @@
                                 <div style="margin-top: 0.5rem; font-size: 0.875rem; color: var(--gray);">
                                     Total para <span id="res-quantidade">1</span> unidade(s): 
                                     <strong id="res-preco-total">R$ 0,00</strong>
+                                </div>
+                            </div>
+
+                            <!-- Calculadora de Parcelamento -->
+                            <div class="parcelamento-container" id="parcelamento-container" style="display: none;">
+                                <div class="parcelamento-title">
+                                    <i class="fas fa-credit-card"></i> Simulação de Parcelamento
+                                </div>
+                                <div class="parcelamento-grid" id="parcelamento-grid">
+                                    <!-- Parcelas serão inseridas aqui -->
                                 </div>
                             </div>
 
@@ -1160,6 +1254,22 @@
         let metodoPagamentoSelecionado = 'cartao';
         let chartDistribuicao = null;
 
+        // Juros para parcelamento
+        const JUROS_PARCELAMENTO = {
+            1: 0,
+            2: 4.96,
+            3: 6.65,
+            4: 8.36,
+            5: 10.10,
+            6: 11.84,
+            7: 13.61,
+            8: 15.36,
+            9: 17.18,
+            10: 19.00,
+            11: 20.78,
+            12: 22.64
+        };
+
         // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
             inicializar();
@@ -1169,13 +1279,14 @@
             carregarDados();
             configurarEventos();
             atualizarCotacao();
-            atualizarInterface();
-            verificarTema();
             
-            // Adicionar custos padrão se primeira vez
-            if (!localStorage.getItem('ledLinePro')) {
+            // Se não há dados salvos, adiciona custos padrão
+            if (!localStorage.getItem('ledLinePro_custos')) {
                 adicionarCustosPadrao();
             }
+            
+            atualizarInterface();
+            verificarTema();
         }
 
         function configurarEventos() {
@@ -1188,32 +1299,39 @@
         function adicionarCustosPadrao() {
             // Custos Empresariais Fixos
             custos.empresaFixos = [
-                { id: Date.now() + 1, nome: 'Shopify', valor: 299, tipo: 'fixo', ativo: true },
-                { id: Date.now() + 2, nome: 'Linktree', valor: 29, tipo: 'fixo', ativo: true },
-                { id: Date.now() + 3, nome: 'Symprosis', valor: 25, tipo: 'fixo', ativo: true },
-                { id: Date.now() + 4, nome: 'Yampi Plus', valor: 49.90, tipo: 'fixo', ativo: true }
+                { id: Date.now() + 1, nome: 'Contabilidade', valor: 350, tipo: 'fixo', ativo: true },
+                { id: Date.now() + 2, nome: 'Shopify', valor: 130, tipo: 'fixo', ativo: true },
+                { id: Date.now() + 3, nome: 'TCS Spy', valor: 80, tipo: 'fixo', ativo: true },
+                { id: Date.now() + 4, nome: 'Linktree', valor: 29, tipo: 'fixo', ativo: true },
+                { id: Date.now() + 5, nome: 'Symmprosys', valor: 29, tipo: 'fixo', ativo: true },
+                { id: Date.now() + 6, nome: 'Marketing', valor: 1000, tipo: 'fixo', ativo: true }
             ];
             
             // Custos Pessoais
             custos.pessoais = [
-                { id: Date.now() + 5, nome: 'Plano de Saúde', valor: 500, tipo: 'fixo', ativo: true },
-                { id: Date.now() + 6, nome: 'Internet', valor: 100, tipo: 'fixo', ativo: true },
-                { id: Date.now() + 7, nome: 'Luz', valor: 150, tipo: 'fixo', ativo: true },
-                { id: Date.now() + 8, nome: 'Gasolina', valor: 400, tipo: 'fixo', ativo: true }
+                { id: Date.now() + 7, nome: 'Faculdade', valor: 400, tipo: 'fixo', ativo: true },
+                { id: Date.now() + 8, nome: 'Luz', valor: 150, tipo: 'fixo', ativo: true },
+                { id: Date.now() + 9, nome: 'Internet', valor: 100, tipo: 'fixo', ativo: true },
+                { id: Date.now() + 10, nome: 'Aluguel', valor: 500, tipo: 'fixo', ativo: true },
+                { id: Date.now() + 11, nome: 'Gasolina', valor: 500, tipo: 'fixo', ativo: true },
+                { id: Date.now() + 12, nome: 'Lanches', valor: 300, tipo: 'fixo', ativo: true },
+                { id: Date.now() + 13, nome: 'Seguro Carro', valor: 250, tipo: 'fixo', ativo: true },
+                { id: Date.now() + 14, nome: 'Plano Internet Celular', valor: 120, tipo: 'fixo', ativo: true },
+                { id: Date.now() + 15, nome: 'YouTube Premium', valor: 69, tipo: 'fixo', ativo: true }
             ];
             
             // Taxas de Pagamento
             custos.pagamento = [
-                { id: Date.now() + 9, nome: 'PIX', metodo: 'pix', taxaFixa: 0, taxaPercentual: 0.99, ativo: true },
-                { id: Date.now() + 10, nome: 'Boleto', metodo: 'boleto', taxaFixa: 3.49, taxaPercentual: 0, ativo: true },
-                { id: Date.now() + 11, nome: 'Cartão (Vista)', metodo: 'cartao', taxaFixa: 0, taxaPercentual: 4.99, ativo: true },
-                { id: Date.now() + 12, nome: 'Cartão (Parcelado)', metodo: 'cartao_parcelado', taxaFixa: 0, taxaPercentual: 14.35, ativo: true }
+                { id: Date.now() + 16, nome: 'PIX', metodo: 'pix', taxaFixa: 0.99, taxaPercentual: 0.99, ativo: true },
+                { id: Date.now() + 17, nome: 'Boleto', metodo: 'boleto', taxaFixa: 4.48, taxaPercentual: 0, ativo: true },
+                { id: Date.now() + 18, nome: 'Cartão (Vista)', metodo: 'cartao', taxaFixa: 0.99, taxaPercentual: 5.59, ativo: true },
+                { id: Date.now() + 19, nome: 'Cartão (Parcelado)', metodo: 'cartao_parcelado', taxaFixa: 0.99, taxaPercentual: 5.59, ativo: true }
             ];
             
             // Impostos
             custos.impostos = [
-                { id: Date.now() + 13, nome: 'Imposto CNPJ', valor: 6, tipo: 'percentual', ativo: true },
-                { id: Date.now() + 14, nome: 'Checkout Yampi', valor: 2.5, tipo: 'percentual', ativo: true }
+                { id: Date.now() + 20, nome: 'Imposto CNPJ', valor: 6, tipo: 'percentual', ativo: true },
+                { id: Date.now() + 21, nome: 'Checkout Yampi', valor: 1.4, tipo: 'percentual', ativo: true }
             ];
             
             salvarDados();
@@ -1241,8 +1359,11 @@
                             </span>
                             ${custo.nome}
                         </div>
-                        <div class="custos-item-valor">
-                            ${formatarMoeda(custo.valor)}
+                        <div class="custos-item-actions">
+                            <span class="custos-item-valor">${formatarMoeda(custo.valor)}</span>
+                            <button class="btn-remove" onclick="removerCusto('empresaFixos', ${custo.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>
                     </div>
                 `;
@@ -1265,8 +1386,11 @@
                             </span>
                             ${custo.nome}
                         </div>
-                        <div class="custos-item-valor">
-                            ${formatarMoeda(custo.valor)}
+                        <div class="custos-item-actions">
+                            <span class="custos-item-valor">${formatarMoeda(custo.valor)}</span>
+                            <button class="btn-remove" onclick="removerCusto('pessoais', ${custo.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>
                     </div>
                 `;
@@ -1286,9 +1410,14 @@
                             </span>
                             ${taxa.nome}
                         </div>
-                        <div class="custos-item-valor">
-                            ${taxa.taxaFixa > 0 ? `R$ ${taxa.taxaFixa}` : ''} 
-                            ${taxa.taxaPercentual > 0 ? `${taxa.taxaPercentual}%` : ''}
+                        <div class="custos-item-actions">
+                            <span class="custos-item-valor">
+                                ${taxa.taxaFixa > 0 ? `R$ ${taxa.taxaFixa.toFixed(2)}` : ''} 
+                                ${taxa.taxaPercentual > 0 ? `${taxa.taxaPercentual.toFixed(2)}%` : ''}
+                            </span>
+                            <button class="btn-remove" onclick="removerCusto('pagamento', ${taxa.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>
                     </div>
                 `;
@@ -1310,14 +1439,19 @@
                             </span>
                             ${imposto.nome}
                         </div>
-                        <div class="custos-item-valor">
-                            ${imposto.tipo === 'percentual' ? imposto.valor + '%' : formatarMoeda(imposto.valor)}
+                        <div class="custos-item-actions">
+                            <span class="custos-item-valor">
+                                ${imposto.tipo === 'percentual' ? imposto.valor.toFixed(2) + '%' : formatarMoeda(imposto.valor)}
+                            </span>
+                            <button class="btn-remove" onclick="removerCusto('impostos', ${imposto.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         </div>
                     </div>
                 `;
             });
             containerImpostos.innerHTML = html;
-            document.getElementById('total-impostos').textContent = totalImpostos.toFixed(1) + '%';
+            document.getElementById('total-impostos').textContent = totalImpostos.toFixed(2) + '%';
         }
 
         function atualizarStats() {
@@ -1367,23 +1501,31 @@
             const totalTaxasPercentuais = taxasPagamento.percentual + impostos.percentual;
             const precoFinal = (precoComMargem + taxasPagamento.fixo) / (1 - totalTaxasPercentuais / 100);
             
+            // Adicionar juros se for parcelado
+            let precoComJuros = precoFinal;
+            if (metodoPagamentoSelecionado === 'cartao_parcelado') {
+                // Usar juros de 12x como referência para o cálculo base
+                const jurosMedio = JUROS_PARCELAMENTO[12] / 100;
+                precoComJuros = precoFinal * (1 + jurosMedio);
+            }
+            
             // Calcular lucro líquido
-            const valorTaxas = (precoFinal * totalTaxasPercentuais / 100) + taxasPagamento.fixo;
-            const lucroLiquido = precoFinal - custoTotal - valorTaxas;
-            const margemReal = (lucroLiquido / precoFinal) * 100;
+            const valorTaxas = (precoComJuros * totalTaxasPercentuais / 100) + taxasPagamento.fixo;
+            const lucroLiquido = precoComJuros - custoTotal - valorTaxas;
+            const margemReal = (lucroLiquido / precoComJuros) * 100;
             
             // Calcular break-even
             const unidadesEquilibrio = Math.ceil(custosTotaisMensais / lucroLiquido);
-            const faturamentoEquilibrio = custosTotaisMensais * (precoFinal / lucroLiquido);
+            const faturamentoEquilibrio = custosTotaisMensais * (precoComJuros / lucroLiquido);
             
             // Atualizar interface
             document.getElementById('res-custo-base').textContent = formatarMoeda(custoProduto);
             document.getElementById('res-custos-operacionais').textContent = formatarMoeda(custoOperacionalPorProduto);
             document.getElementById('res-taxas').textContent = formatarMoeda(valorTaxas);
             document.getElementById('res-lucro').textContent = formatarMoeda(lucroLiquido);
-            document.getElementById('res-preco-final').textContent = formatarMoeda(precoFinal);
+            document.getElementById('res-preco-final').textContent = formatarMoeda(precoComJuros);
             document.getElementById('res-quantidade').textContent = quantidade;
-            document.getElementById('res-preco-total').textContent = formatarMoeda(precoFinal * quantidade);
+            document.getElementById('res-preco-total').textContent = formatarMoeda(precoComJuros * quantidade);
             
             document.getElementById('res-unidades-equilibrio').textContent = unidadesEquilibrio;
             document.getElementById('res-faturamento-equilibrio').textContent = formatarMoeda(faturamentoEquilibrio);
@@ -1391,6 +1533,14 @@
             
             // Mostrar resultado
             document.getElementById('resultado').style.display = 'block';
+            
+            // Mostrar parcelamento se for cartão
+            if (metodoPagamentoSelecionado === 'cartao' || metodoPagamentoSelecionado === 'cartao_parcelado') {
+                calcularParcelamento(precoFinal * quantidade);
+                document.getElementById('parcelamento-container').style.display = 'block';
+            } else {
+                document.getElementById('parcelamento-container').style.display = 'none';
+            }
             
             // Atualizar gráfico
             atualizarGrafico({
@@ -1407,12 +1557,40 @@
                 margemLucro,
                 quantidade,
                 metodoPagamento: metodoPagamentoSelecionado,
-                precoFinal,
+                precoFinal: precoComJuros,
                 lucroLiquido,
                 margemReal,
                 unidadesEquilibrio,
                 observacoes: document.getElementById('observacoes').value
             };
+        }
+
+        function calcularParcelamento(valorTotal) {
+            const container = document.getElementById('parcelamento-grid');
+            let html = '';
+            
+            for (let parcelas = 1; parcelas <= 12; parcelas++) {
+                const juros = JUROS_PARCELAMENTO[parcelas] / 100;
+                const valorComJuros = valorTotal * (1 + juros);
+                const valorParcela = valorComJuros / parcelas;
+                
+                const jurosText = parcelas === 1 ? '(Sem juros)' : `(${JUROS_PARCELAMENTO[parcelas]}%)`;
+                
+                html += `
+                    <div class="parcelamento-item">
+                        <div>
+                            <div class="parcelamento-parcelas">${parcelas}x ${parcelas === 1 ? 'à vista' : ''}</div>
+                            <div class="parcelamento-juros">${jurosText}</div>
+                        </div>
+                        <div>
+                            <div class="parcelamento-valor">${formatarMoeda(valorParcela)}</div>
+                            <div class="parcelamento-total">Total: ${formatarMoeda(valorComJuros)}</div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            container.innerHTML = html;
         }
 
         function calcularCustosTotaisMensais() {
@@ -1517,6 +1695,24 @@
                 custo.ativo = !custo.ativo;
                 salvarDados();
                 atualizarInterface();
+            }
+        }
+
+        function removerCusto(categoria, id) {
+            if (confirm('Deseja remover este custo?')) {
+                if (categoria === 'empresaFixos') {
+                    custos.empresaFixos = custos.empresaFixos.filter(c => c.id !== id);
+                } else if (categoria === 'pessoais') {
+                    custos.pessoais = custos.pessoais.filter(c => c.id !== id);
+                } else if (categoria === 'pagamento') {
+                    custos.pagamento = custos.pagamento.filter(c => c.id !== id);
+                } else if (categoria === 'impostos') {
+                    custos.impostos = custos.impostos.filter(c => c.id !== id);
+                }
+                
+                salvarDados();
+                atualizarInterface();
+                mostrarNotificacao('Custo removido!');
             }
         }
 
@@ -1783,20 +1979,25 @@
         }
 
         function carregarDados() {
-            const dados = localStorage.getItem('ledLinePro');
-            if (dados) {
-                const parsed = JSON.parse(dados);
-                custos = parsed.custos || custos;
-                orcamentos = parsed.orcamentos || [];
+            // Carregar custos
+            const dadosCustos = localStorage.getItem('ledLinePro_custos');
+            if (dadosCustos) {
+                custos = JSON.parse(dadosCustos);
+            }
+            
+            // Carregar orçamentos
+            const dadosOrcamentos = localStorage.getItem('ledLinePro_orcamentos');
+            if (dadosOrcamentos) {
+                orcamentos = JSON.parse(dadosOrcamentos);
             }
         }
 
         function salvarDados() {
-            const dados = {
-                custos,
-                orcamentos
-            };
-            localStorage.setItem('ledLinePro', JSON.stringify(dados));
+            // Salvar custos separadamente
+            localStorage.setItem('ledLinePro_custos', JSON.stringify(custos));
+            
+            // Salvar orçamentos separadamente
+            localStorage.setItem('ledLinePro_orcamentos', JSON.stringify(orcamentos));
         }
 
         // Service Worker
